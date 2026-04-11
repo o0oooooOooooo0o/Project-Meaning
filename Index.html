@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>Project Meaning — Dodecahedron</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:Inter,system-ui,-apple-system,sans-serif;color:#eaf6ff;background:radial-gradient(circle at 28% 18%,rgba(120,220,255,.10),transparent 45%),radial-gradient(circle at 78% 82%,rgba(180,140,255,.12),transparent 45%),linear-gradient(180deg,#03101c 0%,#050b17 55%,#020810 100%);touch-action:none;user-select:none;-webkit-user-select:none}
+header{position:fixed;top:0;left:0;right:0;padding:18px 24px;display:flex;justify-content:space-between;pointer-events:none;z-index:20}
+h1{font-size:13px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#8ce7ff}
+.hint{font-size:11px;color:#9bb3c5;letter-spacing:.12em;text-transform:uppercase}
+#c{position:fixed;inset:0;display:block;cursor:grab}
+#c:active{cursor:grabbing}
+#markers{position:fixed;inset:0;pointer-events:none;z-index:5}
+.dot{position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(180,240,255,.95),rgba(140,200,255,.55) 45%,rgba(90,130,220,.25) 75%);border:1px solid rgba(200,230,255,.9);box-shadow:0 0 18px rgba(140,220,255,.7),0 0 40px rgba(180,140,255,.35),inset 0 0 10px rgba(255,255,255,.4);cursor:pointer;pointer-events:auto;transition:transform .18s,box-shadow .18s}
+.dot::after{content:"";position:absolute;inset:10px;border-radius:50%;background:rgba(255,255,255,.85);filter:blur(1px)}
+.dot:hover{transform:scale(1.25);box-shadow:0 0 26px rgba(180,240,255,1),0 0 55px rgba(200,160,255,.6)}
+footer{position:fixed;bottom:16px;left:0;right:0;text-align:center;font-size:11px;color:#7e95a8;letter-spacing:.18em;text-transform:uppercase;pointer-events:none;z-index:10}
+</style></head><body>
+<header><h1>Project Meaning · Dodecahedron</h1><div class="hint">Drag to rotate</div></header>
+<canvas id="c"></canvas>
+<div id="markers"></div>
+<footer>12 Domains</footer>
+<script type="importmap">{"imports":{"three":"https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.module.min.js"}}</script>
+<script type="module">
+import * as THREE from 'three';
+
+const canvas=document.getElementById('c');
+const markers=document.getElementById('markers');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(42,1,0.1,100);
+camera.position.set(0,0,6);
+
+// Lights for subtle glass shading
+scene.add(new THREE.AmbientLight(0xbfe4ff,0.6));
+const l1=new THREE.DirectionalLight(0x9fd8ff,1.1);l1.position.set(3,4,5);scene.add(l1);
+const l2=new THREE.DirectionalLight(0xc8a0ff,0.7);l2.position.set(-4,-2,3);scene.add(l2);
+const l3=new THREE.PointLight(0x66ffe0,0.6);l3.position.set(0,3,-4);scene.add(l3);
+
+// The dodecahedron — group holds solid glass + wireframe so they rotate together
+const group=new THREE.Group();scene.add(group);
+
+const geo=new THREE.DodecahedronGeometry(1.55,0);
+
+// Glass faces
+const glass=new THREE.MeshPhysicalMaterial({
+  color:0x5aa8ff,
+  metalness:0.1,
+  roughness:0.15,
+  transmission:0.92,
+  thickness:0.8,
+  transparent:true,
+  opacity:0.35,
+  ior:1.35,
+  clearcoat:1,
+  clearcoatRoughness:0.15,
+  side:THREE.DoubleSide,
+  emissive:0x1a2a5a,
+  emissiveIntensity:0.25
+});
+const mesh=new THREE.Mesh(geo,glass);
+group.add(mesh);
+
+// Edges in bright cyan/violet
+const edges=new THREE.EdgesGeometry(geo,0.1);
+const edgeMat=new THREE.LineBasicMaterial({color:0x9fe8ff,transparent:true,opacity:0.85});
+const edgeLines=new THREE.LineSegments(edges,edgeMat);
+group.add(edgeLines);
+
+// Inner faint core for depth
+const coreGeo=new THREE.DodecahedronGeometry(0.55,0);
+const coreMat=new THREE.MeshBasicMaterial({color:0xb48cff,transparent:true,opacity:0.18,wireframe:true});
+group.add(new THREE.Mesh(coreGeo,coreMat));
+
+// Compute the 12 face centers (local space). DodecahedronGeometry has 36 triangles = 12 faces * 3 tris.
+// Each group of 3 consecutive triangles shares a face center.
+const posAttr=geo.attributes.position;
+const faceCenters=[];
+// Build triangles, cluster by coplanar normal & shared center
+const tris=[];
+for(let i=0;i<posAttr.count;i+=3){
+  const a=new THREE.Vector3().fromBufferAttribute(posAttr,i);
+  const b=new THREE.Vector3().fromBufferAttribute(posAttr,i+1);
+  const c=new THREE.Vector3().fromBufferAttribute(posAttr,i+2);
+  const center=new THREE.Vector3().add(a).add(b).add(c).divideScalar(3);
+  const normal=new THREE.Vector3().subVectors(b,a).cross(new THREE.Vector3().subVectors(c,a)).normalize();
+  tris.push({center,normal});
+}
+// Group triangles whose normals match (same face)
+const used=new Array(tris.length).fill(false);
+for(let i=0;i<tris.length;i++){
+  if(used[i])continue;
+  const bucket=[tris[i]];used[i]=true;
+  for(let j=i+1;j<tris.length;j++){
+    if(used[j])continue;
+    if(tris[i].normal.dot(tris[j].normal)>0.999){bucket.push(tris[j]);used[j]=true}
+  }
+  // Face center = average of triangle centers; normal = shared normal
+  const c=new THREE.Vector3();bucket.forEach(t=>c.add(t.center));c.divideScalar(bucket.length);
+  faceCenters.push({pos:c,normal:tris[i].normal.clone()});
+}
+
+// Push each marker slightly outward along its face normal so it sits on the surface
+const dots=[];
+faceCenters.forEach((f,idx)=>{
+  const worldPos=f.pos.clone().add(f.normal.clone().multiplyScalar(0.02));
+  const el=document.createElement('div');
+  el.className='dot';
+  el.dataset.idx=idx;
+  el.addEventListener('click',e=>{e.stopPropagation();/* placeholder — no names yet */});
+  markers.appendChild(el);
+  dots.push({el,local:worldPos,normal:f.normal.clone()});
+});
+
+// Rotation state with drag + inertia
+let rx=-0.25,ry=0.5,vX=0,vY=0.004,drag=false,px=0,py=0;
+function pt(e){return e.touches?{x:e.touches[0].clientX,y:e.touches[0].clientY}:{x:e.clientX,y:e.clientY}}
+canvas.addEventListener('pointerdown',e=>{drag=true;const p=pt(e);px=p.x;py=p.y;canvas.setPointerCapture(e.pointerId)});
+canvas.addEventListener('pointermove',e=>{if(!drag)return;const p=pt(e);const dx=p.x-px,dy=p.y-py;ry+=dx*0.008;rx+=dy*0.008;vY=dx*0.0012;vX=dy*0.0012;px=p.x;py=p.y});
+canvas.addEventListener('pointerup',()=>{drag=false});
+canvas.addEventListener('pointercancel',()=>{drag=false});
+
+function resize(){
+  const w=window.innerWidth,h=window.innerHeight;
+  renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
+}
+window.addEventListener('resize',resize);resize();
+
+const tmp=new THREE.Vector3();
+const camNormal=new THREE.Vector3();
+function tick(){
+  if(!drag){rx+=vX;ry+=vY;vX*=0.96;vY=vY*0.98+0.00015}
+  group.rotation.x=rx;group.rotation.y=ry;
+  renderer.render(scene,camera);
+
+  // Project face-center markers into screen space, hide back-facing
+  const w=window.innerWidth,h=window.innerHeight;
+  dots.forEach(d=>{
+    tmp.copy(d.local).applyEuler(group.rotation);
+    // World-space normal for this face
+    camNormal.copy(d.normal).applyEuler(group.rotation);
+    // Camera looks down -Z from (0,0,6): face is visible when its normal has positive Z component
+    const visible=camNormal.z>0.05;
+    if(!visible){d.el.style.display='none';return}
+    d.el.style.display='block';
+    const p=tmp.clone().project(camera);
+    const x=(p.x*0.5+0.5)*w;
+    const y=(-p.y*0.5+0.5)*h;
+    d.el.style.left=x+'px';
+    d.el.style.top=y+'px';
+    d.el.style.opacity=Math.min(1,0.4+camNormal.z).toFixed(2);
+    d.el.style.zIndex=Math.round(camNormal.z*1000)+1000;
+  });
+  requestAnimationFrame(tick);
+}
+tick();
+</script></body></html>
