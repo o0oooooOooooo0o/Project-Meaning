@@ -1,1 +1,241 @@
-...
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>Project Meaning — Dodecahedron</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:Inter,system-ui,-apple-system,sans-serif;color:#f2f2f2;background:radial-gradient(circle at 50% 42%,rgba(255,255,255,.06),transparent 40%),radial-gradient(circle at 28% 18%,rgba(255,255,255,.04),transparent 45%),radial-gradient(circle at 78% 82%,rgba(255,255,255,.03),transparent 45%),linear-gradient(180deg,#000000 0%,#050505 50%,#000000 100%);touch-action:none;user-select:none;-webkit-user-select:none;filter:grayscale(1) contrast(1.08);animation:expose 4.5s ease-in-out infinite}
+@keyframes expose{0%,100%{filter:grayscale(1) contrast(1.05) brightness(.92)}50%{filter:grayscale(1) contrast(1.22) brightness(1.08)}}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.65) 100%);z-index:1}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 52%,rgba(200,200,200,.45),transparent 26%);animation:breathe 7s ease-in-out infinite;z-index:2;mix-blend-mode:screen}
+@keyframes breathe{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
+#countdown .sigil{display:block;font-family:"SF Mono",ui-monospace,monospace;font-size:clamp(14px,2.2vw,22px);letter-spacing:.8em;color:#777777;margin-bottom:14px;text-shadow:0 0 18px rgba(200,200,200,.45),0 0 38px rgba(255,255,255,.55);animation:breathe 6s ease-in-out infinite;padding-left:.8em}
+#countdown .whisper{margin-top:10px;font-size:10px;letter-spacing:.38em;text-transform:uppercase;color:rgba(180,220,255,.55);font-style:italic;animation:breathe 9s ease-in-out infinite}
+header{position:fixed;top:0;left:0;right:0;padding:18px 24px;display:flex;justify-content:space-between;pointer-events:none;z-index:20}
+h1{font-size:13px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#ffffff}
+.hint{font-size:11px;color:#8a8a8a;letter-spacing:.12em;text-transform:uppercase}
+#countdown{position:fixed;top:44px;left:0;right:0;text-align:center;z-index:15;pointer-events:none;padding:0 16px}
+#countdown .title{font-family:"Cinzel","Trajan Pro",Georgia,serif;font-size:clamp(18px,3.3vw,40px);font-weight:500;letter-spacing:clamp(.2em,.55vw,.42em);text-transform:uppercase;margin-bottom:22px;display:inline-flex;align-items:center;justify-content:center;flex-wrap:nowrap;gap:.35em;background:linear-gradient(180deg,#ffffff 0%,#ffffff 45%,#777777 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 14px rgba(255,255,255,.55)) drop-shadow(0 0 32px rgba(200,200,200,.45));animation:breathe 6s ease-in-out infinite}
+#countdown .ribbon{font-family:"SF Mono",ui-monospace,monospace;font-size:.55em;letter-spacing:.25em;color:#ffffff;-webkit-text-fill-color:#ffffff;opacity:.72;text-shadow:0 0 10px rgba(255,255,255,.55);animation:drift 9s ease-in-out infinite;white-space:nowrap}
+#countdown .ribbon.r{animation-direction:reverse}
+#countdown .void{display:inline-block;width:.82em;height:.82em;border-radius:50%;border:1.5px solid #777777;-webkit-text-fill-color:transparent;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.85),rgba(20,20,20,.6) 55%,transparent 80%);box-shadow:0 0 14px rgba(200,200,200,.45),inset 0 0 8px rgba(255,255,255,.55);vertical-align:-.06em;animation:spin 14s linear infinite;position:relative}
+#countdown .void::after{content:"";position:absolute;inset:-5px;border-radius:50%;border:1px dashed rgba(255,255,255,.55);animation:spin 22s linear infinite reverse}
+#countdown .title .dash{margin:0 .15em;opacity:.5}
+#countdown .title .unlock{font-style:italic;font-weight:300;letter-spacing:.22em;opacity:.94}
+@keyframes breathe{0%,100%{filter:drop-shadow(0 0 12px rgba(255,255,255,.55)) drop-shadow(0 0 28px rgba(200,200,200,.45))}50%{filter:drop-shadow(0 0 24px rgba(255,255,255,.85)) drop-shadow(0 0 56px rgba(180,180,180,.5))}}
+@keyframes drift{0%,100%{opacity:.55;letter-spacing:.25em}50%{opacity:.9;letter-spacing:.32em}}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* Recursive orbital ring around the dodecahedron — the spiral axis */
+.axis{display:none}
+.axis::before,.axis::after{content:"";position:absolute;inset:8%;border-radius:50%;border:1px dashed rgba(200,200,200,.45);animation:spin 140s linear infinite reverse}
+.axis::after{inset:18%;border-style:dotted;border-color:rgba(255,255,255,.55);animation-duration:200s;animation-direction:normal}
+/* Sacred vignette — tinted windows dissolving toward the center */
+.vignette{position:fixed;inset:0;pointer-events:none;z-index:3;background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.5) 72%,rgba(0,0,0,.95) 100%);mix-blend-mode:multiply}
+/* Drifting starfield — void becoming form */
+.stars{position:fixed;inset:0;pointer-events:none;z-index:1;background-image:radial-gradient(1px 1px at 12% 18%,rgba(255,255,255,.85),transparent 60%),radial-gradient(1px 1px at 78% 32%,rgba(200,200,200,.45),transparent 60%),radial-gradient(1px 1px at 42% 70%,rgba(255,255,255,.55),transparent 60%),radial-gradient(1px 1px at 88% 84%,rgba(240,240,240,.7),transparent 60%),radial-gradient(1px 1px at 22% 88%,rgba(255,255,255,.85),transparent 60%),radial-gradient(1px 1px at 65% 12%,rgba(180,180,180,.5),transparent 60%);animation:twinkle 7s ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.35}50%{opacity:.9}}
+.bigO{position:fixed;top:50%;left:50%;width:min(58vmin,540px);height:min(58vmin,540px);margin:calc(min(58vmin,540px)/-2) 0 0 calc(min(58vmin,540px)/-2);border-radius:50%;pointer-events:none;z-index:2;background:radial-gradient(circle,transparent 60%,rgba(255,255,255,.08) 70%,transparent 82%);animation:bigOBreath 4.5s ease-in-out infinite}
+@keyframes bigOBreath{0%,100%{box-shadow:0 0 60px rgba(255,255,255,.18),0 0 140px rgba(255,255,255,.07);opacity:.78}50%{box-shadow:0 0 130px rgba(255,255,255,.4),0 0 240px rgba(255,255,255,.16);opacity:1}}
+.osig{position:fixed;top:50%;width:clamp(56px,16vmin,150px);height:clamp(56px,16vmin,150px);border-radius:50%;border:clamp(3px,.65vmin,6px) solid #fff;background:radial-gradient(circle at 35% 32%,rgba(255,255,255,.14),rgba(0,0,0,.92) 55%,#000 100%);margin-top:calc(clamp(56px,16vmin,150px)/-2);pointer-events:none;z-index:4;animation:osigBreath 4.5s ease-in-out infinite}
+.osig-l{left:max(2vw,calc(50% - min(42vmin,390px)))}
+.osig-r{right:max(2vw,calc(50% - min(42vmin,390px)))}
+@keyframes osigBreath{0%,100%{transform:scale(1);box-shadow:0 0 30px rgba(255,255,255,.4),0 0 80px rgba(255,255,255,.18),inset 0 0 18px rgba(255,255,255,.22),inset 0 0 50px rgba(0,0,0,.92);border-color:rgba(255,255,255,.85)}50%{transform:scale(1.06);box-shadow:0 0 60px rgba(255,255,255,.95),0 0 140px rgba(255,255,255,.4),inset 0 0 28px rgba(255,255,255,.55),inset 0 0 50px rgba(0,0,0,.88);border-color:#fff}}
+#countdown .label{font-size:11px;letter-spacing:.35em;text-transform:uppercase;color:#ffffff;margin-bottom:10px;text-shadow:0 0 14px rgba(255,255,255,.55)}
+#countdown .clock{display:inline-flex;gap:clamp(8px,2vw,28px);align-items:flex-start;justify-content:center;flex-wrap:nowrap}
+#countdown .unit{display:flex;flex-direction:column;align-items:center;min-width:clamp(54px,9vw,110px)}
+#countdown .num{font-family:"SF Mono",ui-monospace,Menlo,monospace;font-size:clamp(42px,8.5vw,108px);font-weight:200;line-height:1;background:linear-gradient(180deg,#fff 0%,#bfbfbf 45%,#777777 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 14px rgba(255,255,255,.55)) drop-shadow(0 0 32px rgba(200,200,200,.45));animation:portal 4.5s ease-in-out infinite;position:relative}
+@keyframes portal{0%,100%{filter:drop-shadow(-1px 0 0 rgba(255,255,255,.55)) drop-shadow(1px 0 0 rgba(200,200,200,.45)) drop-shadow(0 0 18px rgba(255,255,255,.55)) drop-shadow(0 0 38px rgba(200,200,200,.45))}50%{filter:drop-shadow(-2px 0 0 rgba(255,255,255,.55)) drop-shadow(2px 0 0 rgba(200,200,200,.45)) drop-shadow(0 0 28px rgba(255,255,255,.85)) drop-shadow(0 0 60px rgba(180,180,180,.5))}}
+#countdown .tag{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#8a8a8a;margin-top:6px}
+#countdown .sep{font-size:clamp(36px,7vw,92px);font-weight:100;color:rgba(255,255,255,.55);line-height:1;align-self:center;margin-top:-6px}
+#countdown .sub{margin-top:12px;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#6a6a6a}
+#c{position:fixed;top:0;left:0;width:100vw;height:100vh;display:block;cursor:grab;margin:0}
+#c:active{cursor:grabbing}
+#markers{display:none}
+.dot{position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.85),rgba(140,200,255,.55) 45%,rgba(90,130,220,.25) 75%);border:1px solid rgba(255,255,255,.85);box-shadow:0 0 18px rgba(255,255,255,.55),0 0 40px rgba(200,200,200,.45),inset 0 0 10px rgba(255,255,255,.4);cursor:pointer;pointer-events:auto;transition:transform .18s,box-shadow .18s}
+.dot::after{content:"";position:absolute;inset:10px;border-radius:50%;background:rgba(255,255,255,.85);filter:blur(1px)}
+.dot:hover{transform:scale(1.25);box-shadow:0 0 26px rgba(255,255,255,.85),0 0 55px rgba(180,180,180,.5)}
+footer{position:fixed;bottom:16px;left:0;right:0;text-align:center;font-size:11px;color:#6a6a6a;letter-spacing:.18em;text-transform:uppercase;pointer-events:none;z-index:10}
+</style></head><body>
+<div class="stars"></div><div class="axis"></div><div class="bigO"></div><div class="osig osig-l"></div><div class="osig osig-r"></div><header><h1></h1><div class="hint">Drag to rotate</div></header>
+<div id="countdown"><div class="title">Project<span class="void"></span>Meaning<span class="dash">—</span><span class="unlock">Unlock</span></div><div class="label">Countdown · April 21, 2026 · New York</div><div class="clock"><div class="unit"><div class="num" id="cd-d">00</div><div class="tag">Days</div></div><div class="sep">:</div><div class="unit"><div class="num" id="cd-h">00</div><div class="tag">Hours</div></div><div class="sep">:</div><div class="unit"><div class="num" id="cd-m">00</div><div class="tag">Min</div></div><div class="sep">:</div><div class="unit"><div class="num" id="cd-s">00</div><div class="tag">Sec</div></div></div><div class="sub" id="cd-now">— : — : — — ET</div></div>
+<canvas id="c"></canvas>
+<div class="vignette"></div><div id="markers"></div>
+
+<script>
+// Target: April 21, 2026 00:00 America/New_York (EDT, UTC-4) = April 21, 2026 04:00:00 UTC
+const TARGET=Date.UTC(2026,3,21,4,0,0);
+const pad=n=>String(n).padStart(2,'0');
+const elD=document.getElementById('cd-d'),elH=document.getElementById('cd-h'),elM=document.getElementById('cd-m'),elS=document.getElementById('cd-s'),elNow=document.getElementById('cd-now');
+function tickCountdown(){
+  const now=Date.now();let diff=Math.max(0,TARGET-now);
+  const d=Math.floor(diff/86400000);diff-=d*86400000;
+  const h=Math.floor(diff/3600000);diff-=h*3600000;
+  const m=Math.floor(diff/60000);diff-=m*60000;
+  const s=Math.floor(diff/1000);
+  elD.textContent=pad(d);elH.textContent=pad(h);elM.textContent=pad(m);elS.textContent=pad(s);
+  // Current Los Angeles time in 12-hour format
+  try{
+    elNow.textContent='Now in NY · '+new Date().toLocaleTimeString('en-US',{timeZone:'America/New_York',hour:'numeric',minute:'2-digit',second:'2-digit',hour12:true});
+  }catch(e){}
+}
+tickCountdown();setInterval(tickCountdown,1000);
+</script>
+<script type="importmap">{"imports":{"three":"https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.module.min.js"}}</script>
+<script type="module">
+import * as THREE from 'three';
+
+const canvas=document.getElementById('c');
+const markers=document.getElementById('markers');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(42,1,0.1,100);
+camera.position.set(0,-1.1,8.6);camera.lookAt(0,-1.1,0);
+
+// Lights for subtle glass shading
+scene.add(new THREE.AmbientLight(0xffffff,0.6));
+const l1=new THREE.DirectionalLight(0xffffff,1.1);l1.position.set(3,4,5);scene.add(l1);
+const l2=new THREE.DirectionalLight(0xaaaaaa,0.7);l2.position.set(-4,-2,3);scene.add(l2);
+const l3=new THREE.PointLight(0x888888,0.6);l3.position.set(0,3,-4);scene.add(l3);
+
+// The dodecahedron — group holds solid glass + wireframe so they rotate together
+const group=new THREE.Group();scene.add(group);
+
+const geo=new THREE.DodecahedronGeometry(1.55,0);
+
+// Glass faces
+const glass=new THREE.MeshPhysicalMaterial({
+  color:0xdddddd,
+  metalness:0.1,
+  roughness:0.15,
+  transmission:0.92,
+  thickness:0.8,
+  transparent:true,
+  opacity:0.35,
+  ior:1.35,
+  clearcoat:1,
+  clearcoatRoughness:0.15,
+  side:THREE.DoubleSide,
+  emissive:0x111111,
+  emissiveIntensity:0.25
+});
+const mesh=new THREE.Mesh(geo,glass);
+group.add(mesh);
+
+// Edges in bright cyan/violet
+const edges=new THREE.EdgesGeometry(geo,0.1);
+const edgeMat=new THREE.LineBasicMaterial({color:0xffffff,transparent:true,opacity:1});
+const edgeLines=new THREE.LineSegments(edges,edgeMat);
+group.add(edgeLines);
+
+// Inner faint core for depth
+const coreGeo=new THREE.DodecahedronGeometry(0.55,0);
+const coreMat=new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0,wireframe:true});
+group.add(new THREE.Mesh(coreGeo,coreMat));
+
+// Compute the 12 face centers (local space). DodecahedronGeometry has 36 triangles = 12 faces * 3 tris.
+// Each group of 3 consecutive triangles shares a face center.
+const posAttr=geo.attributes.position;
+const faceCenters=[];
+// Build triangles, cluster by coplanar normal & shared center
+const tris=[];
+for(let i=0;i<posAttr.count;i+=3){
+  const a=new THREE.Vector3().fromBufferAttribute(posAttr,i);
+  const b=new THREE.Vector3().fromBufferAttribute(posAttr,i+1);
+  const c=new THREE.Vector3().fromBufferAttribute(posAttr,i+2);
+  const center=new THREE.Vector3().add(a).add(b).add(c).divideScalar(3);
+  const normal=new THREE.Vector3().subVectors(b,a).cross(new THREE.Vector3().subVectors(c,a)).normalize();
+  tris.push({center,normal});
+}
+// Group triangles whose normals match (same face)
+const used=new Array(tris.length).fill(false);
+for(let i=0;i<tris.length;i++){
+  if(used[i])continue;
+  const bucket=[tris[i]];used[i]=true;
+  for(let j=i+1;j<tris.length;j++){
+    if(used[j])continue;
+    if(tris[i].normal.dot(tris[j].normal)>0.999){bucket.push(tris[j]);used[j]=true}
+  }
+  // Face center = average of triangle centers; normal = shared normal
+  const c=new THREE.Vector3();bucket.forEach(t=>c.add(t.center));c.divideScalar(bucket.length);
+  faceCenters.push({pos:c,normal:tris[i].normal.clone()});
+}
+
+// Push each marker slightly outward along its face normal so it sits on the surface
+const dots=[];
+faceCenters.forEach((f,idx)=>{
+  const worldPos=f.pos.clone().add(f.normal.clone().multiplyScalar(0.02));
+  const el=document.createElement('div');
+  el.className='dot';
+  el.dataset.idx=idx;
+  el.addEventListener('click',e=>{e.stopPropagation();/* placeholder — no names yet */});
+  markers.appendChild(el);
+  dots.push({el,local:worldPos,normal:f.normal.clone()});
+});
+
+// Rotation state with drag + inertia
+let rx=-0.25,ry=0.5,vX=0,vY=0.004,drag=false,px=0,py=0;
+function pt(e){return e.touches?{x:e.touches[0].clientX,y:e.touches[0].clientY}:{x:e.clientX,y:e.clientY}}
+canvas.addEventListener('pointerdown',e=>{drag=true;const p=pt(e);px=p.x;py=p.y;canvas.setPointerCapture(e.pointerId)});
+canvas.addEventListener('pointermove',e=>{if(!drag)return;const p=pt(e);const dx=p.x-px,dy=p.y-py;ry+=dx*0.008;rx+=dy*0.008;vY=dx*0.0012;vX=dy*0.0012;px=p.x;py=p.y});
+canvas.addEventListener('pointerup',()=>{drag=false});
+canvas.addEventListener('pointercancel',()=>{drag=false});
+
+function resize(){
+  const w=document.documentElement.clientWidth,h=document.documentElement.clientHeight;
+  canvas.style.width=w+'px';canvas.style.height=h+'px';
+  renderer.setSize(w,h,true);
+  camera.aspect=w/h;camera.updateProjectionMatrix();
+  const radius=1.9;
+  const fovRad=camera.fov*Math.PI/180;
+  const distH=radius/Math.tan(fovRad/2);
+  const distW=radius/Math.tan(fovRad/2)/camera.aspect;
+  const dist=Math.max(distH,distW)*1.4;
+  camera.position.set(0,0,Math.max(dist,7.2));
+  camera.lookAt(0,0,0);
+}
+window.addEventListener('resize',resize);window.addEventListener('orientationchange',()=>setTimeout(resize,120));window.addEventListener('load',resize);resize();setTimeout(resize,300);
+
+const tmp=new THREE.Vector3();
+const camNormal=new THREE.Vector3();
+function tick(){
+  if(!drag){rx+=vX;ry+=vY;vX*=0.96;vY=vY*0.98+0.00015}
+  group.rotation.x=rx;group.rotation.y=ry;
+  // 4.5s recursive breath — synced with title + countdown portal shimmer
+  const t=performance.now()*0.001;
+  const breath=0.5+0.5*Math.sin(t*2*Math.PI/4.5);
+  edgeMat.opacity=0.6+breath*0.35;
+  glass.emissiveIntensity=0.18+breath*0.32;
+  glass.opacity=0.28+breath*0.14;
+  // Subtle drift pulse in the air — makes the whole form feel alive
+  group.scale.setScalar(1+breath*0.012);
+  // Match the flanking o sigils: jet-black interior, bright white edges
+  glass.color.setRGB(0,0,0);
+  glass.opacity=0.92+breath*0.08;
+  glass.transmission=0.1;
+  glass.emissive.setRGB(0,0,0);
+  glass.emissiveIntensity=0;
+  edgeMat.color.setRGB(1,1,1);
+  edgeMat.opacity=0.92+breath*0.08;
+  renderer.render(scene,camera);
+
+  // Project face-center markers into screen space, hide back-facing
+  const w=window.innerWidth,h=window.innerHeight;
+  dots.forEach(d=>{
+    tmp.copy(d.local).applyEuler(group.rotation);
+    // World-space normal for this face
+    camNormal.copy(d.normal).applyEuler(group.rotation);
+    // Camera looks down -Z from (0,0,6): face is visible when its normal has positive Z component
+    const visible=camNormal.z>0.05;
+    if(!visible){d.el.style.display='none';return}
+    d.el.style.display='block';
+    const p=tmp.clone().project(camera);
+    const x=(p.x*0.5+0.5)*w;
+    const y=(-p.y*0.5+0.5)*h;
+    d.el.style.left=x+'px';
+    d.el.style.top=y+'px';
+    d.el.style.opacity=Math.min(1,0.4+camNormal.z).toFixed(2);
+    d.el.style.zIndex=Math.round(camNormal.z*1000)+1000;
+  });
+  requestAnimationFrame(tick);
+}
+tick();
+</script></body></html>
