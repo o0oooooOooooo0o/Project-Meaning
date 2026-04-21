@@ -4148,9 +4148,9 @@ function speakStage2Prompt(promptHtml){
 // Stage 2 intro chain — 2 sentences across ~15 seconds. Plays
 // immediately on session start. Uses the same cached preferredVoice.
 const STAGE2_INTRO_CHAIN = [
-  { text: 'Welcome to Stage Two. Keep the slow breath from Stage One going',
+  { text: '...Okay... Now... Welcome to Stage Two. Keep the slow breath from Stage One going',
     delay: 500,  rate: 0.72, pitch: 1.04 },
-  { text: 'Drop your attention below your thoughts, into the body itself. Let one sensation come forward on its own.',
+  { text: '...Okay... Now...Drop your attention below your thoughts, into the body itself. Let one sensation come forward on its own.',
     delay: 8500, rate: 0.72, pitch: 1.04 },
 ];
 
@@ -4221,8 +4221,8 @@ const S2_PHASES = [
   { k:'arrive',    from:0.00, to:0.12,
     label:'Phase · Arrive',
     prompts:[
-      'Let the breath stay slow — about five to six breaths per minute. Feel the ground under your feet and seat. Let one sensation in your body come forward on its own. You are not searching for it — you are receiving it. Whatever shows up first is what you will work with.',
-      'Commit to that sensation. Put your attention <em>inside</em> the part of the body holding it, rather than watching it from outside. If a light hand on your chest, side ribs, or lower belly helps, use it for a moment.'
+      '...Okay... Now... Let the breath stay slow — about five to six breaths per minute. Feel the ground under your feet and seat. Let one sensation in your body come forward on its own. You are not searching for it — you are receiving it. Whatever shows up first is what you will work with.',
+      '...Okay... Now... Commit to that sensation. Put your attention <em>inside</em> the part of the body holding it, rather than watching it from outside. If a light hand on your chest, side ribs, or lower belly helps, use it for a moment.'
     ] },
   { k:'mapping',   from:0.12, to:0.68 /* dynamic dimension within */ },
   { k:'calibrate', from:0.68, to:0.88,
