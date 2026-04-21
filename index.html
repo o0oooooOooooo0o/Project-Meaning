@@ -4210,10 +4210,10 @@ const S2_DIMENSIONS = [
   { label:'LOCATION',     prompt:'Where in the body is the sensation? Name the area in the simplest physical words — chest, throat, belly, jaw, hands, shoulders. Does it have a clear edge, or does it fade out into the surrounding area? Dont explain it yet. Just say where it is.' },
   { label:'QUALITY',      prompt:'What does it feel like, as a pure sensation? Use plain physical words: pressure, heat, cold, tightness, hollowness, density, heaviness, lightness. Pick the word that actually fits — not the one that sounds deep.' },
   { label:'INTENSITY',    prompt:'How strong is the sensation itself, on a 0 to 10 scale? Rate the sensation, not the emotion attached to it. A strong feeling can sit on top of a faint sensation, and a very physical sensation can carry almost no emotion. Keep them separate.' },
-  { label:'MOVEMENT',     prompt:'Now... Is it still, or is it moving? Pulsing, spreading, rising, shrinking, flickering, throbbing? Is it steady, or does it come in waves? Describe the movement itself — not what you think the movement means.' },
-  { label:'DIRECTION',    prompt:'Which way is the sensation going? Toward you, away from you, up, down, inward, outward, radiating from a centre, shooting from one point to another? If there&rsquo;s no clear direction, say so — the sensation is simply staying put.' },
+  { label:'MOVEMENT',     prompt:'... Now... Is it still, or is it moving? Pulsing, spreading, rising, shrinking, flickering, throbbing? Is it steady, or does it come in waves? Describe the movement itself — not what you think the movement means.' },
+  { label:'DIRECTION',    prompt:'... Now... Which way is the sensation going? Toward you, away from you, up, down, inward, outward, radiating from a centre, shooting from one point to another? If theres no clear direction, say so — the sensation is simply staying put.' },
   { label:'COHERENCE',    prompt:'Is the sensation one clear thing, or several things at once? Check four layers and see if they match up: the raw sensation, the image or picture it brings to mind, the thing the body wants to do, and the tone it carries. Are they pointing the same way, or pulling apart?' },
-  { label:'MEANING-TONE', prompt:'Before naming an emotion, what is the <em>tone</em> of the sensation? Pleasant, unpleasant, or neutral? Drawing you toward something, pushing you away, or holding still? If a short phrase fits — &ldquo;a bracing alertness&rdquo;, &ldquo;a quiet pulling&rdquo; — use it. That short phrase isn&rsquo;t an interpretation. It&rsquo;s just the tone, named.' },
+  { label:'MEANING-TONE', prompt:'Before naming an emotion, what is the <em>tone</em> of the sensation? Pleasant, unpleasant, or neutral? Drawing you toward something, pushing you away, or holding still? If a short phrase fits — &ldquo;a bracing alertness&rdquo;, &ldquo;a quiet pulling&rdquo; — use it. That short phrase isn&rsquo;t an interpretation.' },
 ];
 
 // Phase architecture — fractions of total session time.
@@ -4234,13 +4234,13 @@ const S2_PHASES = [
     prompts:[
       '<strong>Accuracy check.</strong> How closely does what you described match what is actually happening in the body? If you honestly can&rsquo;t tell, say so. A truthful &ldquo;I don&rsquo;t know&rdquo; is more accurate than a confident guess.',
       '<strong>Attention check.</strong> How inside the body were you, versus watching from outside and narrating? Being inside isn&rsquo;t a performance — it&rsquo;s just where your attention actually was.',
-      '<strong>Confidence check.</strong> On a 0&ndash;10 scale, how sure are you about what you just described? Now notice: strong feelings often carry weak precision. The gap between your confidence and how right you likely are — that gap is the thing you&rsquo;re training. Note where you expect to be most wrong.'
+      '<strong> .... now for your Confidence check.</strong> On a 0&ndash;10 scale, how sure are you about what you just described? Now notice: strong feelings often carry weak precision. The gap between your confidence and how right you likely are — that gap is the thing you&rsquo;re training. Note where you expect to be most wrong.'
     ] },
   { k:'translate', from:0.88, to:1.01,
     label:'Phase · Translate',
     prompts:[
       '<strong>What it grabs.</strong> What is this sensation doing to your attention right now? Is it making certain worries louder, or muting other things that usually matter to you?',
-      '<strong>What it suggests.</strong> What interpretation is the sensation pushing you toward? Threat, promise, obligation, shame, curiosity? Name the interpretation out loud without buying into it.',
+      '<strong>What it suggests.</strong> What interpretation is the sensation pushing you toward? Threat, promise, obligation, shame, curiosity? Name the interpretation.',
       '<strong>What the body wants to do.</strong> What is the body getting ready for — move toward, pull away, brace, soften, reach out, hide? This is the moment a sensation turns into meaning. Watch it form. Don&rsquo;t automatically go along with it. You are the reader, not the reading.'
     ] },
 ];
