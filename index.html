@@ -391,25 +391,6 @@ footer{
 }
 .intro-toggle-row:hover .intro-toggle-label{color:#333}
 
-/* Disabled toggle — used when zero-voice overrides intro toggle */
-.intro-toggle-row.is-disabled{cursor:not-allowed;opacity:.38}
-.intro-toggle-row.is-disabled input[type="checkbox"]{cursor:not-allowed}
-.intro-toggle-row.is-disabled:hover .intro-toggle-label{color:#888}
-
-/* Voice options cluster — groups intro + zero-voice into one quiet block */
-.voice-options{
-  display:flex;flex-direction:column;gap:9px;
-  padding:11px 14px 12px;
-  border:1px solid rgba(0,0,0,.08);
-  border-radius:2px;
-  background:rgba(0,0,0,.015);
-}
-.voice-options-label{
-  font-family:'JetBrains Mono',monospace;font-size:8px;
-  letter-spacing:.3em;text-transform:uppercase;color:rgba(0,0,0,.3);
-  margin-bottom:2px;
-}
-
 /* Depth selector — Beginner / Intermediate / Expert
    Sits at the top of the instructions column so the user self-calibrates
    before they read. Three segments, one active, quiet typographic weight
@@ -2361,65 +2342,6 @@ body:has(#screen-intro:not(.hidden)) .vignette{ opacity:0 }
         </div>
       </div>
     </div>
-
-    <!-- RIGHT: Instructions -->
-    <div class="instr-text-col">
-
-      <!-- ════════════ UNIFIED INSTRUCTION ════════════
-           One seamless flow. Each step: a clear instruction and
-           the single mechanism that matters. Love is held from
-           step two through to the end of the session. -->
-      <div class="depth-content active">
-
-        <div class="step-block">
-          <div class="step-num">01</div>
-          <div>
-            <div class="step-title">Breathe Through the Heart</div>
-            <div class="step-desc">
-              Rest your attention in the centre of the heart. Let the breath flow in and out through that spot. Five seconds in, five seconds out, unforced. At this cadence the cardiovascular system hits its natural resonance near 0.1 Hz and HRV smooths into a clean wave. The breath is the scaffolding.
-            </div>
-          </div>
-        </div>
-
-        <div class="step-block">
-          <div class="step-num">02</div>
-          <div>
-            <div class="step-title">Heart Feeling</div>
-            <div class="step-desc">
-              Activate a sincere feeling of love in the heart. Not as an idea held in the mind, but as a felt sense in the body - it is already there, in the tissue. Soften the chest and let it come forward. Breathe it through the heart as it arrives. This is the regenerative feeling you sustain for the rest of the session.
-            </div>
-          </div>
-        </div>
-
-        <div class="step-block">
-          <div class="step-num">03</div>
-          <div>
-            <div class="step-title">Deepen</div>
-            <div class="step-desc">
-              Stay with the love and deepen it. The effort stays, never so hard that it takes you away from the feeling, always enough to sustain it and move to a subtler, deeper and more powerful level. The longer it is sustained, the stronger it becomes.
-            </div>
-          </div>
-        </div>
-
-        <div class="instr-safety">
-          If attention to the heart feels distressing, open your eyes, shorten the session, and let <em>ease</em> lead before love.
-        </div>
-      </div>
-    </div>
-
-    <!-- FOOTER (full-width band): voice left · duration right -->
-    <div class="instr-footer-row">
-      <div class="voice-options">
-        <div class="voice-options-label">Voice</div>
-        <label class="intro-toggle-row">
-          <input type="checkbox" id="intro-toggle" checked>
-          <span class="intro-toggle-label">Play 30-second introduction</span>
-        </label>
-        <label class="intro-toggle-row">
-          <input type="checkbox" id="zero-voice-toggle">
-          <span class="intro-toggle-label">Zero voiceover · silent session</span>
-        </label>
-      </div>
 
       <div>
         <div class="dur-label">Tap to Begin · Choose Duration</div>
