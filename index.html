@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Project Meaning </title>
+<title>Project Meaning — Heart Coherence</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=JetBrains+Mono:wght@200;300;400&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -272,10 +272,10 @@ footer{
   .dur-btn{padding:14px 6px;font-size:12px;letter-spacing:.18em}
 }
 
-/* Footer row — voice + duration laid out horizontally on desktop */
+/* Footer row — duration band on its own */
 .instr-footer-row{
   display:grid;
-  grid-template-columns:minmax(220px,1fr) 2.3fr;
+  grid-template-columns:1fr;
   gap:32px;
   align-items:start;
   padding-top:28px;
@@ -361,53 +361,6 @@ footer{
   position:absolute;bottom:-22px;
   font-family:'JetBrains Mono',monospace;font-size:11px;
   color:rgba(0,0,0,.35);letter-spacing:.08em;
-}
-
-/* Intro toggle checkbox */
-.intro-toggle-row{
-  display:flex;align-items:center;gap:10px;
-  cursor:pointer;user-select:none;-webkit-user-select:none;
-}
-.intro-toggle-row input[type="checkbox"]{
-  appearance:none;-webkit-appearance:none;
-  width:14px;height:14px;flex-shrink:0;
-  border:1px solid rgba(0,0,0,.35);
-  background:transparent;cursor:pointer;
-  position:relative;transition:border-color .18s,background .18s;
-}
-.intro-toggle-row input[type="checkbox"]:checked{
-  background:#000;border-color:#000;
-}
-.intro-toggle-row input[type="checkbox"]:checked::after{
-  content:'';position:absolute;
-  left:3px;top:1px;width:5px;height:8px;
-  border:1.5px solid #fff;border-top:none;border-left:none;
-  transform:rotate(42deg);
-}
-.intro-toggle-label{
-  font-family:'JetBrains Mono',monospace;font-size:9px;
-  letter-spacing:.18em;text-transform:uppercase;color:#888;
-  transition:color .18s;
-}
-.intro-toggle-row:hover .intro-toggle-label{color:#333}
-
-/* Disabled toggle — used when zero-voice overrides intro toggle */
-.intro-toggle-row.is-disabled{cursor:not-allowed;opacity:.38}
-.intro-toggle-row.is-disabled input[type="checkbox"]{cursor:not-allowed}
-.intro-toggle-row.is-disabled:hover .intro-toggle-label{color:#888}
-
-/* Voice options cluster — groups intro + zero-voice into one quiet block */
-.voice-options{
-  display:flex;flex-direction:column;gap:9px;
-  padding:11px 14px 12px;
-  border:1px solid rgba(0,0,0,.08);
-  border-radius:2px;
-  background:rgba(0,0,0,.015);
-}
-.voice-options-label{
-  font-family:'JetBrains Mono',monospace;font-size:8px;
-  letter-spacing:.3em;text-transform:uppercase;color:rgba(0,0,0,.3);
-  margin-bottom:2px;
 }
 
 /* Depth selector — Beginner / Intermediate / Expert
@@ -572,62 +525,6 @@ footer{
   border-left:1px solid rgba(0,0,0,.14);
   padding:8px 11px;
   margin-top:2px;
-}
-
-/* Full-screen intro overlay */
-.intro-overlay{
-  position:fixed;inset:0;
-  background:#fff;
-  display:none;              /* hidden until beginSession() shows it */
-  align-items:center;justify-content:center;
-  z-index:200;
-  opacity:1;
-  transition:opacity 1s ease;
-}
-.intro-overlay.visible{display:flex}
-.intro-overlay.fading{opacity:0;pointer-events:none}
-.intro-inner{
-  display:flex;flex-direction:column;align-items:center;
-  gap:clamp(18px,3vh,34px);
-  padding:30px 20px;
-  text-align:center;max-width:440px;
-}
-.intro-orb-wrap{
-  position:relative;
-  width:clamp(90px,18vmin,130px);height:clamp(90px,18vmin,130px);
-}
-.intro-orb{
-  width:100%;height:100%;border-radius:50%;
-  border:1px solid rgba(0,0,0,.18);
-  background:radial-gradient(circle at 42% 38%,rgba(0,0,0,.05),transparent 70%);
-  animation:introBreath 4.5s ease-in-out infinite;
-}
-@keyframes introBreath{
-  0%,100%{transform:scale(.88);box-shadow:0 0 20px rgba(0,0,0,.04),0 0 60px rgba(0,0,0,.02)}
-  50%{transform:scale(1.12);box-shadow:0 0 40px rgba(0,0,0,.09),0 0 90px rgba(0,0,0,.04)}
-}
-.intro-timer-row{
-  display:flex;flex-direction:column;align-items:center;gap:4px;
-}
-.intro-cd-num{
-  font-family:'JetBrains Mono',monospace;
-  font-size:clamp(36px,7vw,62px);font-weight:200;
-  color:rgba(0,0,0,.55);letter-spacing:-.02em;
-  line-height:1;
-}
-.intro-cd-label{
-  font-family:'JetBrains Mono',monospace;font-size:9px;
-  letter-spacing:.3em;text-transform:uppercase;color:rgba(0,0,0,.25);
-}
-.intro-text-block{
-  min-height:3.2em;display:flex;align-items:center;justify-content:center;
-}
-.intro-line{
-  font-family:'Cormorant Garamond',Georgia,serif;
-  font-size:clamp(15px,2.4vw,20px);font-weight:300;font-style:italic;
-  line-height:1.7;color:rgba(0,0,0,.58);
-  transition:opacity .5s ease;
-  max-width:360px;
 }
 
 /* Phase instruction */
@@ -1965,7 +1862,7 @@ body:has(#screen-intro:not(.hidden)) .vignette{ opacity:0 }
 <div class="screen" id="screen-intro">
   <!-- Full-page Vitruvian background -->
   <div class="vitruvian-frame">
-    
+   
     <img class="vitruvian-img" id="vitruvian-img" alt="Vitruvian figure" draggable="false">
   </div>
   <!-- Parchment bands: cream fade zones for text readability -->
@@ -2006,7 +1903,7 @@ body:has(#screen-intro:not(.hidden)) .vignette{ opacity:0 }
 
   <p style="margin:0 0 1.15em 0; line-height:1.75;">And underneath emotion sits something deeper: conditioned signal, body-learning, autonomic habit, procedural memory, relational imprint, inherited predisposition, genetic architecture and epigenetic tuning.</p>
 
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">So what many people call “personality” may in large part be the visible weather of deeper invisible adaptation. Not just autobiographical memory, but state memory, threat memory, reward memory, relational memory, protective memory, developmental memory, and embodied memory.</p>
+  <p style="margin:0 0 1.15em 0; line-height:1.75;">So what many people call "personality" may in large part be the visible weather of deeper invisible adaptation. Not just autobiographical memory, but state memory, threat memory, reward memory, relational memory, protective memory, developmental memory, and embodied memory.</p>
 
   <p style="margin:0 0 1.15em 0; line-height:1.75;">The body remembers in how it reacts. The body remembers in what it expects. The body remembers in what it prepares for before thought explains anything.</p>
 
@@ -2042,7 +1939,7 @@ body:has(#screen-intro:not(.hidden)) .vignette{ opacity:0 }
 
   <p style="margin:0 0 1.15em 0; line-height:1.75;">This is why PROJECT : MEANING heads downward before it heads upward: downward into state, downward into signal, downward into pattern, and downward into the architecture beneath explanation.</p>
 
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">Because if you do not understand the machinery producing meaning, you will mistake its outputs for truth. You will call conditioned worldview “clarity.” You will call defensive philosophy “insight.” You will call chronic collapse “who I am.” You will call inherited patterning “my nature.” You will call dysregulation “reality.”</p>
+  <p style="margin:0 0 1.15em 0; line-height:1.75;">Because if you do not understand the machinery producing meaning, you will mistake its outputs for truth. You will call conditioned worldview "clarity." You will call defensive philosophy "insight." You will call chronic collapse "who I am." You will call inherited patterning "my nature." You will call dysregulation "reality."</p>
 
   <p style="margin:0 0 1.15em 0; line-height:1.75;">That is why this project is heading in this direction. It is trying to separate signal from story, sensation from interpretation, pattern from identity, activation from truth, and embodied history from destiny.</p>
 
@@ -2052,7 +1949,7 @@ body:has(#screen-intro:not(.hidden)) .vignette{ opacity:0 }
 
   <p style="margin:0 0 1.15em 0; line-height:1.75;">Not as vague self-help. As nervous system training.</p>
 
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">Because if the body participates in constructing meaning, then training the body’s participation is not optional. It is central.</p>
+  <p style="margin:0 0 1.15em 0; line-height:1.75;">Because if the body participates in constructing meaning, then training the body's participation is not optional. It is central.</p>
 
   <p style="margin:0 0 1.15em 0; line-height:1.75;">PROJECT : MEANING is heading in this direction because it is trying to solve the problem at the level where the problem is being generated, not merely at the level where the person talks about it.</p>
 
