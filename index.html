@@ -734,37 +734,15 @@ footer{
   z-index:0;
   overflow:hidden;
   pointer-events:none;
-  /* Parchment fill that shows on the sides of the image when the
-     viewport is wider than the image's aspect ratio. Radial gradient
-     from cream center to slightly deeper cream at the edges so the
-     side fill reads as aged parchment, not a flat bar. */
-  background:radial-gradient(ellipse at center,
-    #f5e6c4 0%,
-    #ecd9ad 55%,
-    #d9c08a 100%);
 }
 .vitruvian-img{
   position:absolute;
   top:50%;left:50%;
   transform:translate(-50%,-50%);
-  /* Default (portrait viewports): cover the screen with the image. */
   width:100%;height:100%;
   object-fit:cover;
-  object-position:center;
+  object-position:center top;
   filter:contrast(1.04) saturate(1.08) brightness(1.01);
-}
-/* Landscape viewports (desktops, laptops, iPads in landscape, phones
-   rotated): show the WHOLE figure — head to feet, arms fully extended.
-   The parchment-gradient background on .vitruvian-frame fills the side
-   strips so it looks like a continuous manuscript page rather than a
-   letterboxed image. */
-@media (min-aspect-ratio: 1/1){
-  .vitruvian-img{
-    width:auto;
-    height:100%;
-    object-fit:contain;
-    object-position:center;
-  }
 }
 
 /* Top parchment band — cream fade from top, strong where text sits,
