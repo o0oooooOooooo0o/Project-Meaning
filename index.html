@@ -744,6 +744,26 @@ footer{
   object-position:center;
   filter:contrast(1.04) saturate(1.08) brightness(1.01);
 }
+/* === LANDSCAPE VIEWPORT FIX ===
+   The Vitruvian image is portrait (933×1400, aspect ~0.67). On a landscape
+   viewport (e.g. 1366×657, aspect ~2.08) object-fit:cover scales the image
+   up by ~1.46x to fill the width, which mathematically forces ~70% of the
+   image height OUT of the viewport — the head AND feet both end up cropped.
+   No amount of object-position tuning can fix this; the crop window is
+   physically smaller than the figure on these viewports.
+   
+   Solution: on landscape viewports, switch to object-fit:contain so the
+   WHOLE figure is visible. Match the side-fill colour to the image's own
+   sepia edges (NOT cream) so it reads as one continuous aged-parchment
+   page rather than the image floating on a different background. */
+@media (min-aspect-ratio: 1/1){
+  .vitruvian-frame{
+    background:#c9a368;  /* warm sepia matching the image's outer edges */
+  }
+  .vitruvian-img{
+    object-fit:contain;
+  }
+}
 
 /* Top parchment band — cream fade from top, strong where text sits,
    dissolving into the image below */
