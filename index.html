@@ -847,14 +847,21 @@ body:has(#screen-intro:not(.hidden)) .vignette{ opacity:0 }
   backdrop-filter:blur(2px);
   text-shadow:0 0 5px rgba(250,241,218,1);
   box-shadow:0 2px 6px rgba(50,28,8,0.18);
-  transition:background .3s ease,color .3s ease,border-color .3s ease,transform .2s ease;
+  transition:background .3s ease,color .3s ease,border-color .3s ease,
+             box-shadow .3s ease,transform .2s ease;
   -webkit-tap-highlight-color:transparent;
 }
+/* Hover / focus highlight — warm parchment glow + lift so it's
+   visibly clickable. Stronger background, deeper border, amber halo. */
 #screen-intro .why-question-btn:hover,
 #screen-intro .why-question-btn:focus-visible{
-  background:rgba(250,241,218,0.85);
-  color:#1a0a00;
-  border-color:rgba(90,54,20,0.6);
+  background:rgba(255,232,180,0.98);
+  color:#0d0500;
+  border-color:rgba(90,54,20,0.95);
+  box-shadow:0 0 0 1px rgba(90,54,20,0.35),
+             0 4px 14px rgba(50,28,8,0.32),
+             0 0 22px rgba(255,200,90,0.55);
+  transform:translateY(-1px);
   outline:none;
 }
 #screen-intro .why-question-btn:active{
@@ -1975,7 +1982,7 @@ body:has(#screen-intro:not(.hidden)) .vignette{ opacity:0 }
             id="whyQuestionBtn"
             onclick="toggleWhyAnswer()"
             aria-expanded="false"
-            aria-controls="whyAnswer">Why? The Question that no longer begs.</button>
+            aria-controls="whyAnswer">Why? The Question that no longer begs. Click here.</button>
     <div class="why-answer" id="whyAnswer" aria-hidden="true"> <section class="pm-intro-why" style="display:block; max-width:100%;">
   <p style="margin:0 0 1.15em 0; line-height:1.75;">Why is PROJECT : MEANING heading in this direction?</p>
 
