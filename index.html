@@ -735,6 +735,25 @@ footer{
   overflow:hidden;
   pointer-events:none;
 }
+/* === BLURRED BACKDROP TECHNIQUE ===
+   This is the only geometrically honest solution. The image is portrait
+   (933x1400), so on a landscape viewport, no single CSS setting can BOTH
+   show the whole figure AND fill the screen — one or the other has to give.
+   
+   Solution: stack TWO copies of the same image:
+   
+   1. BACKDROP (.vitruvian-img):  scaled with object-fit:cover, blurred,
+      slightly darkened. Fills the entire viewport edge-to-edge so there
+      are NO visible gaps or side strips, even on ultrawide screens.
+   
+   2. FOREGROUND (.vitruvian-img-fg):  scaled with object-fit:contain so
+      the WHOLE figure is visible — head, arms, body, feet, framing.
+   
+   Because the backdrop is the same image (just blurred and scaled-up),
+   the colour and texture blend seamlessly with the sharp foreground.
+   No cream voids, no sepia bars, no head-cropping. This is the same
+   technique used by YouTube/Apple Music for portrait media on
+   landscape players. */
 .vitruvian-img{
   position:absolute;
   top:50%;left:50%;
@@ -744,23 +763,27 @@ footer{
   object-position:center;
   filter:contrast(1.04) saturate(1.08) brightness(1.01);
 }
-/* === LANDSCAPE VIEWPORT FIX ===
-   The Vitruvian image is portrait (933×1400, aspect ~0.67). On a landscape
-   viewport (e.g. 1366×657, aspect ~2.08) object-fit:cover scales the image
-   up by ~1.46x to fill the width, which mathematically forces ~70% of the
-   image height OUT of the viewport — the head AND feet both end up cropped.
-   No amount of object-position tuning can fix this; the crop window is
-   physically smaller than the figure on these viewports.
-   
-   Solution: on landscape viewports, switch to object-fit:contain so the
-   WHOLE figure is visible. Match the side-fill colour to the image's own
-   sepia edges (NOT cream) so it reads as one continuous aged-parchment
-   page rather than the image floating on a different background. */
+.vitruvian-img-fg{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:100%;height:100%;
+  object-fit:cover;        /* portrait viewports keep cover behaviour */
+  object-position:center;
+  display:none;            /* hidden by default; shown only on landscape */
+  filter:contrast(1.04) saturate(1.08) brightness(1.01);
+  z-index:1;
+}
+/* Landscape viewports: activate the blurred-backdrop technique. */
 @media (min-aspect-ratio: 1/1){
-  .vitruvian-frame{
-    background:#c9a368;  /* warm sepia matching the image's outer edges */
-  }
   .vitruvian-img{
+    /* Backdrop: blurred & dimmed copy that fills the screen */
+    filter:contrast(1.04) saturate(1.08) brightness(0.85) blur(28px);
+    transform:translate(-50%,-50%) scale(1.15);  /* extra scale to hide blur edges */
+  }
+  .vitruvian-img-fg{
+    /* Foreground: sharp whole figure */
+    display:block;
     object-fit:contain;
   }
 }
@@ -1991,6 +2014,7 @@ body:has(#screen-intro:not(.hidden)) .vignette{ opacity:0 }
   <div class="vitruvian-frame">
     
     <img class="vitruvian-img" id="vitruvian-img" alt="Vitruvian figure" draggable="false">
+    <img class="vitruvian-img-fg" id="vitruvian-img-fg" alt="" aria-hidden="true" draggable="false">
   </div>
   <!-- Parchment bands: cream fade zones for text readability -->
   <div class="parchment-top"></div>
@@ -4134,8 +4158,10 @@ function stripHtmlForSpeech(html){
     .replace(/&[a-z]+;/gi, ' ')
     .replace(/→/g, ' then ')           // read arrows naturally
     .replace(/·/g, ', ')               // middot as comma pause
+    .replace(/\s*\.{2,}\s*/g, '. ')    // ellipses → one sentence pause; stops the TTS vocalizing the dots
     .replace(/\s+/g, ' ')
-    .trim();
+    .trim()
+    .replace(/^[\s.,]+/, '');          // drop any leading pause left by a starting ellipsis
   return txt;
 }
 
@@ -4182,7 +4208,7 @@ function playStage2IntroChain(){
       ensureVoice();
       try { speechSynthesis.cancel(); } catch(e) {}
       try {
-        const utt = new SpeechSynthesisUtterance(s.text);
+        const utt = new SpeechSynthesisUtterance(stripHtmlForSpeech(s.text));
         utt.rate = s.rate; utt.pitch = s.pitch; utt.volume = 0.96;
         if (preferredVoice) utt.voice = preferredVoice;
         speechSynthesis.speak(utt);
