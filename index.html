@@ -1201,9 +1201,12 @@ function startStage2WithDuration(secs){
     s2.rem--;
     s2RenderMeta();
     if(s2.rem <= 0){ clearInterval(s2.tick); s2.tick = null; showStage2Completion(); return; }
-    if(s2.peek !== null) return;                 // re-reading a step: hold the rotation + countdown
-    s2.stepRem--;
+    s2.stepRem--;                                // keep counting even while re-reading a step
     if(s2.stepRem <= 0){                          // interval elapsed: shift to the next step + bell
+      if(s2.peek !== null){                       // a re-read ends when the rotation moves on
+        s2.peek = null;
+        document.querySelectorAll('#s2s-chain .s2s-chip').forEach(function(c){ c.classList.remove('peek'); });
+      }
       s2ShowStep((s2.lastDim + 1) % S2_DIMENSIONS.length, true);
       s2.stepRem = S2_STEP_SECS;
     }
