@@ -1,1288 +1,1210 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Project Meaning</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Imagattern</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#faf8f4; --ink:#171717; --muted:#6a6a64; --line:rgba(0,0,0,.14);
-  --serif:'Cormorant Garamond',Georgia,serif;
-  --display:'Cinzel',serif;
-  --mono:'JetBrains Mono',ui-monospace,monospace;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{background:var(--bg);color:var(--ink);font-family:var(--serif);
-  font-size:19px;line-height:1.65;-webkit-text-size-adjust:100%}
-em{font-style:italic} strong{font-weight:600}
+  :root{
+    --bg:#090c12;
+    --bg2:#0c1119;
+    --panel:rgba(255,255,255,.035);
+    --panel2:rgba(255,255,255,.055);
+    --line:rgba(255,255,255,.09);
+    --line2:rgba(255,255,255,.14);
+    --text:#ece9e1;
+    --muted:#8b909c;
+    --faint:#5b606c;
+    --accent:#f2b65c;
+    --accent2:#ffd58a;
+    --accent-soft:rgba(242,182,92,.14);
+    --good:#74d39a;
+    --bad:#e07a5f;
+    --r:18px;
+    --serif:"Fraunces",Georgia,serif;
+    --sans:"Hanken Grotesk",system-ui,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:var(--sans);
+    color:var(--text);
+    background:var(--bg);
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    min-height:100dvh;
+  }
+  /* atmospheric background */
+  body::before{
+    content:"";position:fixed;inset:0;z-index:-2;
+    background:
+      radial-gradient(120% 80% at 50% -10%, rgba(242,182,92,.10), transparent 55%),
+      radial-gradient(90% 70% at 85% 110%, rgba(116,150,211,.10), transparent 60%),
+      linear-gradient(180deg,var(--bg2),var(--bg));
+  }
+  body::after{
+    content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.4;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>");
+    mix-blend-mode:overlay;
+  }
+  #app{position:relative;min-height:100dvh;display:flex;align-items:flex-start;justify-content:center}
+  .screen{display:none;width:100%;max-width:880px;padding:clamp(22px,5vw,48px) clamp(18px,5vw,40px) 64px;animation:rise .55s cubic-bezier(.2,.7,.2,1) both}
+  .screen.active{display:block}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 
-/* screens */
-.screen{display:block}
-.screen.hidden{display:none}
-.wrap,.instr-layout,.s2-preview-wrap,.session-main{
-  max-width:760px;margin:0 auto;padding:56px 26px 96px}
-.session-main,.s2-preview-wrap{padding-top:32px}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--accent);opacity:.9}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(38px,9vw,62px);line-height:.98;letter-spacing:-.02em;margin:.18em 0 .12em}
+  h1 em{font-style:italic;color:var(--accent2)}
+  .lede{color:var(--muted);font-size:15.5px;line-height:1.6;max-width:54ch}
+  .lede b{color:var(--text);font-weight:600}
+  .invocation{font-family:var(--serif);font-weight:400;font-size:clamp(16.5px,4.4vw,19px);line-height:1.74;color:rgba(236,233,225,.82);max-width:52ch;margin-top:20px;letter-spacing:.002em}
+  .invocation b{font-weight:600;color:var(--text)}
+  .invocation em{font-style:italic;color:var(--accent2)}
+  .invocation.turn{margin-top:26px;padding-top:24px;position:relative;color:rgba(236,233,225,.62);font-style:italic}
+  .invocation.turn em{font-style:normal}
+  .invocation.turn::before{content:"";position:absolute;top:0;left:0;width:38px;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--accent),transparent)}
+  .invocation.bridge{margin-top:24px;font-size:clamp(15px,4vw,17px);color:rgba(236,233,225,.7)}
+  .invocation.bridge em{font-style:italic;color:var(--accent2)}
 
-/* labels / headings */
-.proj-title,.instr-heading,.stage-icon-label,.s2-preview-title,.completion h2,
-.stage2-completion h2,.completion-title,.s2c-title{font-family:var(--display)}
-.instr-sub,.theory-card-eyebrow,.dur-label,.depth-label,.depth-tab,.step-num,
-.stage-icon-sublabel,.session-title,.session-timer-disp,.s2s-phase-label,.phase-step-label,
-.breath-label,.s2s-chip,.s2-preview-eyebrow,.s2-mod-tag,.hint{
-  font-family:var(--mono);text-transform:uppercase;letter-spacing:.16em;font-size:11px;color:var(--muted)}
+  .method{margin-top:30px;border-top:1px solid var(--line);padding-top:28px;max-width:640px}
+  .method .mlabel{font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+  .method .mintro{color:rgba(236,233,225,.74);font-size:14px;line-height:1.6;margin-bottom:22px;max-width:56ch;font-family:var(--sans)}
+  .method .mintro b{color:var(--text);font-weight:600}
+  .step{display:flex;gap:15px;padding:10px 0;align-items:flex-start}
+  .step .num{flex:0 0 auto;width:27px;height:27px;border-radius:50%;border:1px solid var(--line2);color:var(--accent2);font-family:var(--mono);font-size:12.5px;display:grid;place-items:center;margin-top:1px}
+  .step .txt{font-size:14.5px;line-height:1.55;color:var(--muted)}
+  .step .txt b{color:var(--text);font-weight:600}
+  .step .txt em{font-style:italic;color:var(--accent2);font-family:var(--serif)}
+  .mfoot{font-family:var(--mono);font-size:12px;color:var(--faint);line-height:1.6;margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
+  .mfoot b{color:var(--accent2);font-weight:500}
 
-/* intro */
-header{max-width:760px;margin:0 auto;padding:56px 26px 8px;text-align:center}
-.proj-title{font-size:15px;letter-spacing:.3em;text-transform:uppercase;font-weight:500}
-.why-question-btn{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
-  background:none;border:1px solid var(--line);color:var(--ink);cursor:pointer;
-  padding:9px 16px;margin-top:22px;border-radius:2px}
-.why-question-btn:hover{background:#fff}
-#whyAnswer{display:none;max-width:760px;margin:18px auto 0;padding:0 26px;text-align:left}
-#whyAnswer.show{display:block}
-#whyAnswer p{margin:0 0 1.05em}
-#stage-icons{max-width:760px;margin:30px auto 80px;padding:0 26px;
-  display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
-.stage-icon{flex:1 1 150px;min-width:150px;border:1px solid var(--line);border-radius:3px;
-  padding:20px 16px;text-align:center;cursor:pointer;background:#fff}
-.stage-icon:hover{border-color:var(--ink)}
-.stage-icon[aria-disabled="true"]{opacity:.4;pointer-events:none;background:transparent}
-.stage-icon-label{font-size:14px;letter-spacing:.18em;color:var(--ink);margin-bottom:4px}
+  .settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start;margin-top:24px}
+  .settings-grid .card{margin-top:0}
+  @media (max-width:959px){ .settings-grid{grid-template-columns:1fr} }
 
-/* top-level paths: Heart / Mind / Body */
-.is-hidden{display:none!important}
-.pillars{max-width:760px;margin:36px auto 0;padding:0 26px;
-  display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
-.pillar{flex:0 1 168px;min-width:128px;border:1px solid var(--line);border-radius:3px;
-  background:#fff;color:var(--ink);cursor:pointer;padding:20px 16px;text-align:center;
-  font-family:var(--display);text-transform:uppercase;letter-spacing:.24em;font-size:15px;
-  transition:background .18s ease,color .18s ease,border-color .18s ease}
-.pillar:hover{border-color:var(--ink)}
-.pillar.pillar-active{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.pillar-sub{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--muted);margin-top:7px}
-.pillar.pillar-active .pillar-sub{color:rgba(255,255,255,.72)}
-.pillar-panel{max-width:600px;margin:26px auto 80px;padding:34px 26px;text-align:center;
-  border:1px solid var(--line);border-radius:3px}
-.pillar-panel .pp-title{font-family:var(--display);font-size:22px;letter-spacing:.2em;
-  text-transform:uppercase;margin-bottom:10px}
-.pillar-panel .pp-note{font-family:var(--serif);font-style:italic;color:var(--muted);font-size:19px}
+  .step.st-action{cursor:pointer;border-radius:10px;transition:background .15s;margin:2px -8px;padding-left:8px;padding-right:8px}
+  .step.st-action:hover{background:var(--accent-soft)}
+  .open-tag{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--accent);white-space:nowrap}
 
-/* instructions */
-.instr-heading{font-size:clamp(22px,4vw,30px);letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px}
-.instr-sub{margin-bottom:30px}
-.theory-lede{font-size:21px;font-style:italic;color:#3a3a36;margin-bottom:34px;
-  border-left:2px solid var(--line);padding-left:18px}
-.theory-card{border-top:1px solid var(--line);padding:20px 0}
-.theory-card-eyebrow{display:block;margin-bottom:6px}
-.theory-card-title{font-style:italic;font-size:20px;margin-bottom:8px}
-.theory-card-body{color:#2c2c28}
-.theory-divider{font-family:var(--display);text-transform:uppercase;letter-spacing:.2em;
-  font-size:13px;color:var(--muted);text-align:center;margin:42px 0 26px;
-  padding-top:26px;border-top:1px solid var(--line)}
+  /* examples screen */
+  #examples{max-width:880px}
+  .ex-legend{font-size:13.5px;line-height:1.62;color:rgba(236,233,225,.72);max-width:78ch;margin-top:16px;border:1px solid var(--line);border-radius:12px;padding:15px;background:var(--panel)}
+  .ex-legend b{color:var(--accent2);font-weight:600}
+  .ex-legend em{font-style:italic;color:var(--accent2)}
+  .ex-legend .mk{font-family:var(--mono);color:var(--accent2);font-weight:600;font-style:normal}
+  .ex-group{font-family:var(--mono);font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--accent);margin:32px 0 2px;padding-bottom:7px;border-bottom:1px solid var(--line)}
+  .ex{border:1px solid var(--line);border-radius:14px;padding:15px 16px 13px;margin-top:13px;background:var(--panel)}
+  .ex-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+  .ex-tag{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--accent2)}
+  .ex-gap{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--faint)}
+  .ex-seq{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:6px}
+  .dchip{width:30px;height:34px;border-radius:8px;border:1px solid var(--line);display:grid;place-items:center;font-family:var(--mono);font-size:15px;color:var(--faint);background:rgba(0,0,0,.22)}
+  .dchip.on{border-color:var(--accent);color:var(--accent2);background:var(--accent-soft);box-shadow:0 0 14px -4px var(--accent)}
+  .ex-tok{display:inline}
+  .tok-n{font-family:var(--mono);font-weight:600;color:var(--accent2)}
+  .tok-s{font-style:italic;color:rgba(236,233,225,.82)}
+  .tok-p{font-family:var(--serif);font-style:italic;color:var(--accent2)}
+  .tr{display:flex;gap:11px;padding:9px 0;border-top:1px solid var(--line)}
+  .tr:first-of-type{border-top:none}
+  .tr-t{flex:0 0 26px;font-family:var(--mono);font-size:11px;color:var(--faint);padding-top:2px}
+  .tr-main{flex:1;font-size:13px;line-height:1.55;color:var(--muted)}
+  .bind{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--faint);white-space:nowrap}
+  .tr-recall{margin-top:7px;padding:8px 11px;border-left:2px solid var(--line2);border-radius:0 8px 8px 0;background:rgba(255,255,255,.025);font-size:12.5px;line-height:1.5;color:var(--muted)}
+  .tr-recall .mark{font-family:var(--mono);color:var(--accent2);margin:0 3px}
+  .tr-recall .v{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;font-weight:600}
+  .tr-recall.match{border-left-color:var(--good);background:rgba(116,211,154,.06)}
+  .tr-recall.match .v{color:var(--good)}
+  .tr-recall.nomatch{border-left-color:var(--faint)}
+  .tr-recall.nomatch .v{color:var(--muted)}
+  @media (max-width:520px){.tr-t{flex-basis:22px}}
 
-.step-block{display:flex;gap:16px;align-items:flex-start;margin:22px 0}
-.step-num{margin-top:5px;flex:0 0 auto;width:28px;font-size:13px}
-.step-title{font-size:21px;font-style:italic;margin-bottom:4px}
-.step-desc{color:#2c2c28}
-.instr-safety{font-size:16px;color:var(--muted);font-style:italic;
-  border-left:2px solid var(--line);padding-left:14px;margin-top:24px}
+  .stagger>*{opacity:0;animation:rise .6s cubic-bezier(.2,.7,.2,1) forwards}
+  .stagger>*:nth-child(1){animation-delay:.05s}
+  .stagger>*:nth-child(2){animation-delay:.12s}
+  .stagger>*:nth-child(3){animation-delay:.19s}
+  .stagger>*:nth-child(4){animation-delay:.26s}
+  .stagger>*:nth-child(5){animation-delay:.33s}
+  .stagger>*:nth-child(6){animation-delay:.40s}
 
-.s2-depth-row,.depth-selector{display:flex;gap:18px;margin:30px 0 8px}
-.depth-tab{background:none;border:none;border-bottom:2px solid transparent;
-  cursor:pointer;padding:4px 0;color:var(--muted)}
-.depth-tab.active{color:var(--ink);border-bottom-color:var(--ink)}
-.depth-content,.s2-depth-block{display:none}
-.depth-content.active,.s2-depth-block.active{display:block}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin-top:22px;backdrop-filter:blur(6px)}
+  .card h2{font-family:var(--mono);font-weight:500;font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--faint);margin-bottom:16px}
 
-.dur-label{margin:42px 0 14px}
-.duration-row{display:flex;flex-wrap:wrap;gap:10px}
-.dur-btn,.s2-return,.session-end,.completion button,.stage2-completion button,
-.restart-btn,.s2c-btn,.s2-mod{font-family:var(--mono);text-transform:uppercase;letter-spacing:.14em;
-  font-size:12px;border:1px solid var(--line);background:#fff;color:var(--ink);
-  padding:11px 18px;border-radius:2px;cursor:pointer}
-.dur-btn:hover,.s2-return:hover,.session-end:hover{border-color:var(--ink);background:var(--bg)}
-.s2-return{margin-top:14px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 0;border-top:1px solid var(--line)}
+  .row:first-of-type{border-top:none;padding-top:0}
+  .row .label{font-size:15px}
+  .row .hint{display:block;font-size:12.5px;color:var(--faint);margin-top:3px;font-family:var(--mono)}
+  .control{flex:0 0 auto}
+  .row.disabled{opacity:.38;pointer-events:none}
 
-/* hide purely-visual / removed-voice machinery */
-.voice-options,.intro-overlay,.instr-body-col,.instr-footer-row .voice-options,
-#back-btn,.hrv-panel,.ci-field,.session-mini,.s-hrv-wrap,.hrv-wave{display:none}
+  /* stepper */
+  .stepper{display:flex;align-items:center;gap:0;border:1px solid var(--line2);border-radius:12px;overflow:hidden;background:rgba(0,0,0,.2)}
+  .stepper button{width:42px;height:42px;border:none;background:transparent;color:var(--text);font-size:22px;line-height:1;cursor:pointer;transition:background .15s}
+  .stepper button:hover{background:var(--accent-soft)}
+  .stepper .val{min-width:46px;text-align:center;font-family:var(--mono);font-size:20px;font-weight:600;color:var(--accent2)}
 
-/* ---------- Stage One session (minimal breath pacer) ---------- */
-.session-hdr,.session-bar{max-width:760px;margin:0 auto;padding:22px 26px;
-  display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
-.session-timer-disp{font-size:13px;letter-spacing:.16em;color:var(--ink)}
-.session-end{padding:7px 14px}
-.breath-container{display:flex;flex-direction:column;align-items:center;margin:44px 0 30px}
-.breath-stage{position:relative;width:210px;height:210px;display:flex;align-items:center;justify-content:center}
-.breath-ball{width:128px;height:128px;border-radius:50%;border:1px solid var(--ink);
-  transform:scale(.8);transition:transform 5s linear}
-.breath-ball.inhale-state{transform:scale(1.55)}
-.breath-readout{position:absolute;inset:0;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:6px;pointer-events:none}
-.breath-label{font-size:12px}
-.breath-countdown{font-family:var(--mono);font-size:30px;color:var(--ink);line-height:1}
-.phase-step-label{text-align:center;margin-bottom:8px}
-.phase-text{text-align:center;font-size:21px;font-style:italic;max-width:560px;margin:0 auto}
-/* Stage One — single page (exercise at top, how-it-works below) */
-.s1-scroll{max-width:840px;margin:0 auto;padding:48px 26px 96px;
-  display:flex;flex-direction:column;gap:clamp(20px,3vh,34px)}
-.s1-header{text-align:center}
-.s1-exercise{border:1px solid var(--line);border-radius:4px;background:rgba(0,0,0,.015);
-  padding:clamp(22px,3.4vw,34px) clamp(18px,3vw,30px);margin-top:6px}
-#s1-start{display:flex;flex-direction:column;align-items:center;text-align:center}
-.s1-ex-lede{font-size:clamp(16px,2vw,20px);font-style:italic;color:#2c2c28;max-width:560px;margin-bottom:24px}
-.s1-ex-durations{justify-content:center}
-.s1-ex-note{font-size:14px;line-height:1.55;color:var(--muted);max-width:560px;margin-top:22px}
-#s1-live{display:flex;flex-direction:column;align-items:center;text-align:center}
-.s1-live-bar{width:100%;display:flex;align-items:center;justify-content:space-between;
-  gap:12px;border-bottom:1px solid var(--line);padding-bottom:12px}
-.coherence-indicators{display:flex;gap:24px;justify-content:center;margin-top:20px}
-.ci-row{display:flex;flex-direction:column;align-items:center;gap:6px}
-.ci-dot{width:9px;height:9px;border-radius:50%;border:1px solid var(--line);transition:background .4s ease,border-color .4s ease}
-.ci-dot.active{background:var(--ink);border-color:var(--ink)}
-.ci-label{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
-.s1s-progress{height:2px;background:var(--line);width:100%;max-width:560px;margin:28px auto 0}
-.s1-howto{margin-top:clamp(28px,4.5vh,48px)}
-.s1-howto-head{font-family:var(--mono);font-size:11px;letter-spacing:.36em;text-transform:uppercase;
-  color:var(--muted);text-align:center;padding-top:clamp(20px,3vh,30px);
-  border-top:1px solid var(--line);margin-bottom:clamp(20px,3vh,30px)}
-.progress,.progress-bar,.s2s-progress{height:2px;background:var(--line);max-width:760px;margin:46px auto 0}
-.progress-fill,.s2s-progress-fill{height:100%;width:0;background:var(--ink);transition:width 1s linear}
+  /* toggle */
+  .toggle{position:relative;width:54px;height:30px;border-radius:999px;border:1px solid var(--line2);background:rgba(0,0,0,.25);cursor:pointer;transition:.2s;padding:0}
+  .toggle::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--muted);transition:.22s cubic-bezier(.3,1.4,.5,1)}
+  .toggle.on{background:var(--accent-soft);border-color:var(--accent)}
+  .toggle.on::after{left:27px;background:var(--accent)}
 
-/* ---------- Stage Two session ---------- */
-.s2s-mandala-wrap{text-align:center;margin:30px 0 18px}
-.s2s-orbit-label,#s2s-center{font-family:var(--display);text-transform:uppercase;
-  letter-spacing:.14em;font-size:clamp(20px,4vw,28px)}
-.s2s-panel{max-width:640px;margin:0 auto;text-align:center}
-.s2s-phase-label{margin-bottom:12px}
-.s2s-next{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--muted);margin:-4px 0 16px}
-#s2s-countdown{font-variant-numeric:tabular-nums;color:var(--ink)}
-.s2s-prompt{font-size:21px;font-style:italic;min-height:5em}
-.s2s-chain{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:680px;margin:30px auto 0}
-.s2s-chip{font-size:10px;border:1px solid var(--line);border-radius:2px;padding:6px 10px;cursor:pointer;color:var(--muted)}
-.s2s-chip.done{opacity:.55}
-.s2s-chip.active{border-color:var(--ink);color:var(--ink);background:var(--bg)}
-.s2s-chip.peek{outline:1px dashed var(--ink)}
-.fading{opacity:0;transition:opacity .3s}
+  /* select / slider */
+  select{appearance:none;background:rgba(0,0,0,.25);border:1px solid var(--line2);color:var(--text);font-family:var(--mono);font-size:14px;padding:10px 38px 10px 14px;border-radius:12px;cursor:pointer;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%23f2b65c' stroke-width='1.6'><path d='M1 1.5 6 6.5 11 1.5'/></svg>");
+    background-repeat:no-repeat;background-position:right 13px center;max-width:min(300px,52vw);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  select:focus{outline:none;border-color:var(--accent)}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:150px;height:4px;border-radius:99px;background:var(--line2);outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--bg)}
+  input[type=range]::-moz-range-thumb{width:18px;height:18px;border:3px solid var(--bg);border-radius:50%;background:var(--accent);cursor:pointer}
 
-/* ---------- Stage Two overview (teaching screen) ---------- */
-.s2-preview-title{font-size:clamp(22px,4vw,30px);letter-spacing:.1em;text-transform:uppercase}
-.s2-mod{border-top:1px solid var(--line);padding:18px 0}      /* legacy, unused */
-.s2-scroll{max-width:840px;margin:0 auto;padding:48px 26px 96px;
-  display:flex;flex-direction:column;gap:clamp(22px,3.4vh,40px)}
-.s2-header{text-align:center}
-.s2-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.42em;text-transform:uppercase;
-  color:var(--muted);margin-bottom:14px}
-.s2-title{font-family:var(--display);font-size:clamp(28px,5.2vw,44px);font-weight:500;
-  letter-spacing:.12em;text-transform:uppercase;line-height:1.12;margin-bottom:10px}
-.s2-subtitle{font-family:var(--serif);font-style:italic;font-weight:300;
-  font-size:clamp(17px,2.4vw,22px);color:var(--muted)}
-.s2-lede{font-size:clamp(16px,2vw,20px);line-height:1.72;
-  padding:clamp(16px,2.6vw,26px) clamp(6px,2vw,18px);
-  border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.s2-law{background:rgba(0,0,0,.025);border:1px solid var(--line);border-radius:3px;
-  padding:clamp(18px,2.8vw,26px) clamp(20px,3vw,30px);text-align:center}
-.s2-law-label{font-family:var(--mono);font-size:10px;letter-spacing:.36em;text-transform:uppercase;
-  color:var(--muted);margin-bottom:10px}
-.s2-law-text{font-size:clamp(15px,1.9vw,18px);line-height:1.6}
-.s2-modules{display:grid;grid-template-columns:1fr;gap:clamp(14px,2.2vh,20px)}
-@media(min-width:680px){.s2-modules{grid-template-columns:1fr 1fr}}
-.s2-module{background:rgba(0,0,0,.018);border:1px solid var(--line);border-radius:3px;
-  padding:clamp(18px,2.6vw,24px);display:flex;flex-direction:column;gap:9px;
-  transition:background .35s ease,border-color .35s ease}
-.s2-module:hover{background:rgba(0,0,0,.045);border-color:var(--ink)}
-.s2-mod-code{font-family:var(--mono);font-weight:300;font-size:10.5px;letter-spacing:.42em;text-transform:uppercase;color:var(--muted)}
-.s2-mod-name{font-family:var(--display);font-weight:500;font-size:clamp(16px,2.2vw,19px);letter-spacing:.12em;text-transform:uppercase;color:var(--ink)}
-.s2-mod-desc{font-size:clamp(14px,1.78vw,16.5px);line-height:1.58;color:#2c2c28}
-.s2-closing{font-style:italic;font-size:clamp(16px,2vw,20px);text-align:center;
-  color:#2c2c28;max-width:640px;margin:0 auto}
-.s2-scroll .dur-btn,.s2-scroll .s2-return{align-self:center}
-/* single-page: exercise at top */
-.s2-exercise{border:1px solid var(--line);border-radius:4px;background:rgba(0,0,0,.015);
-  padding:clamp(24px,3.6vw,36px) clamp(18px,3vw,30px);margin-top:6px}
-#s2-start{display:flex;flex-direction:column;align-items:center;text-align:center}
-.s2-ex-lede{font-size:clamp(16px,2vw,20px);font-style:italic;color:#2c2c28;max-width:540px;margin-bottom:24px}
-.s2-ex-durations{justify-content:center}
-.s2-ex-note{font-size:14px;line-height:1.55;color:var(--muted);max-width:560px;margin-top:22px}
-#s2-live{display:flex;flex-direction:column;align-items:center;text-align:center}
-.s2-live-bar{width:100%;display:flex;align-items:center;justify-content:space-between;
-  border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:30px}
-#s2-live .s2s-chain{margin-top:24px}
-#s2-live .s2s-progress{margin:24px auto 0}
-/* how-to explanations below */
-.s2-howto{margin-top:clamp(32px,5vh,54px);display:flex;flex-direction:column;gap:clamp(20px,3.2vh,36px)}
-.s2-howto-head{font-family:var(--mono);font-size:11px;letter-spacing:.36em;text-transform:uppercase;
-  color:var(--muted);text-align:center;padding-top:clamp(20px,3vh,30px);border-top:1px solid var(--line)}
-.s2-teach{display:flex;flex-direction:column;gap:12px}
-.s2-teach-title{font-family:var(--display);font-size:clamp(18px,2.5vw,23px);letter-spacing:.04em;margin-top:10px}
-.stage-back{align-self:flex-start;background:none;border:none;cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);padding:6px 2px;margin-bottom:-6px;transition:color .2s}
-.stage-back:hover{color:var(--ink)}
-.s2-teach p{font-size:clamp(16px,1.95vw,19px);line-height:1.72;color:#2c2c28}
-.s2-teach em{font-style:italic;color:var(--ink)}
-.s2-teach strong{font-weight:600}
+  .btn{font-family:var(--sans);font-weight:600;font-size:15px;border-radius:13px;border:1px solid var(--line2);background:var(--panel2);color:var(--text);padding:13px 20px;cursor:pointer;transition:.16s;display:inline-flex;align-items:center;gap:9px;justify-content:center}
+  .btn:hover{border-color:var(--line2);background:rgba(255,255,255,.08);transform:translateY(-1px)}
+  .btn.ghost{background:transparent}
+  .btn.primary{background:linear-gradient(180deg,var(--accent2),var(--accent));color:#241a09;border:none;box-shadow:0 8px 24px -10px rgba(242,182,92,.7)}
+  .btn.primary:hover{filter:brightness(1.05)}
+  .btn.full{width:100%}
+  .btn.sm{padding:9px 14px;font-size:13.5px}
 
-/* ---------- completion overlays ---------- */
-#completion,#stage2-completion{position:fixed;inset:0;background:var(--bg);
-  display:none;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:30px;gap:18px;z-index:50}
-#completion.show,#stage2-completion.show{display:flex}
-#completion h2,#stage2-completion h2,.completion-title,.s2c-title{
-  font-size:clamp(22px,5vw,30px);letter-spacing:.14em;text-transform:uppercase}
-#completion p,#stage2-completion p{max-width:560px;font-size:20px;font-style:italic;color:#2c2c28}
+  .actions{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;max-width:560px;margin-left:auto;margin-right:auto}
+  .actions .btn{flex:1;min-width:140px}
+
+  .disclosure{margin-top:14px}
+  .disclosure summary{list-style:none;cursor:pointer;font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);padding:8px 0;display:flex;align-items:center;gap:8px}
+  .disclosure summary::-webkit-details-marker{display:none}
+  .disclosure summary::before{content:"+";color:var(--accent);font-size:15px}
+  .disclosure[open] summary::before{content:"–"}
+
+  .note{font-size:12.5px;color:var(--faint);line-height:1.55;margin-top:16px;font-family:var(--mono);max-width:640px}
+  .warn{display:none;margin-top:18px;padding:13px 15px;border-radius:12px;border:1px solid rgba(224,122,95,.4);background:rgba(224,122,95,.1);color:#f1b6a6;font-size:13.5px;line-height:1.5}
+
+  /* ---------- PLAY ---------- */
+  #play{max-width:640px;display:none;flex-direction:column;align-items:center;min-height:100dvh;justify-content:center;text-align:center;padding-top:0}
+  #play.active{display:flex}
+  .readouts{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:clamp(20px,5vh,46px)}
+  .pill{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--muted);border:1px solid var(--line);background:var(--panel);border-radius:99px;padding:8px 15px}
+  .pill b{color:var(--accent2);font-weight:600}
+
+  .stage{position:relative;width:min(78vw,300px);height:min(78vw,300px);display:grid;place-items:center;margin-bottom:clamp(10px,3vh,26px)}
+  .ringwrap{position:absolute;inset:0}
+  .ring-track,.progress{fill:none;stroke-width:3}
+  .ring-track{stroke:rgba(255,255,255,.07)}
+  .progress{stroke:var(--accent);stroke-linecap:round;stroke-dasharray:var(--c);stroke-dashoffset:var(--c);transform:rotate(-90deg);transform-origin:50% 50%;filter:drop-shadow(0 0 6px rgba(242,182,92,.5))}
+  .progress.run{animation:deplete var(--dur,3s) linear forwards}
+  @keyframes deplete{from{stroke-dashoffset:var(--c)}to{stroke-dashoffset:0}}
+
+  .orb{position:relative;width:54%;height:54%;border-radius:50%;
+    background:radial-gradient(circle at 38% 34%, #20262f, #0c1016 70%);
+    box-shadow:inset 0 0 30px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.06);
+    animation:breathe 4.4s ease-in-out infinite}
+  .orb::before{content:"";position:absolute;inset:-30%;border-radius:50%;background:radial-gradient(circle,var(--accent-soft),transparent 62%);opacity:.5;transition:opacity .3s}
+  .orb.pulse{animation:pulse .62s cubic-bezier(.2,.8,.2,1)}
+  .orb.pulse::before{opacity:1}
+  @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
+  @keyframes pulse{0%{transform:scale(1)}20%{transform:scale(1.11);box-shadow:inset 0 0 30px rgba(0,0,0,.5),0 0 46px rgba(242,182,92,.55),0 0 0 1px rgba(242,182,92,.5)}100%{transform:scale(1)}}
+  .ripple{position:absolute;width:54%;height:54%;border-radius:50%;border:2px solid var(--good);opacity:0;pointer-events:none}
+  .ripple.go{animation:ripple .7s ease-out}
+  @keyframes ripple{from{transform:scale(.7);opacity:.55}to{transform:scale(1.9);opacity:0}}
+  .listening{font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--faint);height:14px}
+
+  .matchbtn{margin-top:clamp(18px,4vh,34px);width:min(80vw,320px);padding:20px;border-radius:18px;border:1px solid var(--accent);background:var(--accent-soft);color:var(--accent2);
+    font-family:var(--sans);font-weight:700;font-size:19px;letter-spacing:.02em;cursor:pointer;transition:transform .08s, background .15s;-webkit-tap-highlight-color:transparent;user-select:none}
+  .matchbtn:hover{background:rgba(242,182,92,.22)}
+  .matchbtn:active,.matchbtn.hit{transform:scale(.97);background:rgba(242,182,92,.34)}
+  .matchbtn span{display:block;font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;color:var(--accent);opacity:.8;margin-top:6px;font-weight:500}
+  .endlink{margin-top:22px;background:none;border:none;color:var(--faint);font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;padding:6px}
+  .endlink:hover{color:var(--muted)}
+
+  /* countdown overlay */
+  .countdown{position:fixed;inset:0;z-index:20;display:none;place-items:center;background:rgba(9,12,18,.86);backdrop-filter:blur(4px)}
+  .countdown.show{display:grid}
+  .countdown span{font-family:var(--serif);font-weight:600;font-size:clamp(90px,28vw,180px);color:var(--accent2);animation:cd .9s ease-out}
+  @keyframes cd{from{opacity:0;transform:scale(.6)}40%{opacity:1}to{opacity:.0;transform:scale(1.25)}}
+
+  /* ---------- RESULTS ---------- */
+  .verdict{font-family:var(--serif);font-size:clamp(30px,7vw,44px);font-weight:600;letter-spacing:-.01em;margin:6px 0 4px}
+  .verdict.up{color:var(--good)}
+  .verdict.down{color:var(--bad)}
+  .verdict.hold{color:var(--accent2)}
+  .verdict-sub{font-family:var(--mono);font-size:13px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+  .statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:24px}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .stat .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint)}
+  .stat .v{font-family:var(--mono);font-size:30px;font-weight:600;color:var(--text);margin-top:6px;line-height:1}
+  .stat .v small{font-size:15px;color:var(--muted);font-weight:400}
+  .progressbar{height:6px;border-radius:99px;background:rgba(255,255,255,.08);margin-top:18px;overflow:hidden}
+  .progressbar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:99px;transition:width .5s}
+
+  /* ---------- SUMMARY ---------- */
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+  .chip{font-family:var(--mono);font-size:11.5px;padding:6px 10px;border-radius:9px;border:1px solid var(--line);background:var(--panel);color:var(--muted)}
+  .chip b{color:var(--accent2)}
+  .hist{margin-top:8px}
+  .hist .hrow{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid var(--line);font-family:var(--mono);font-size:13px;color:var(--muted)}
+  .hist .hrow b{color:var(--text);font-weight:600}
+  .empty{color:var(--faint);font-family:var(--mono);font-size:12.5px;padding:6px 0}
+
+  @media (max-width:420px){
+    .row{flex-direction:row}
+    .statgrid{grid-template-columns:1fr 1fr}
+  }
 </style>
 </head>
 <body>
-<div class="stars"></div>
-<div class="vignette"></div>
-<button class="back-btn hidden" id="back-btn">← Back</button>
+<div id="app">
 
-<!-- ================================================================
-     SCREEN 1 — INTRO
-     ================================================================ -->
-<div class="screen" id="screen-intro">
-  <!-- Full-page Vitruvian background -->
-  <div class="vitruvian-frame">
-    
-    
-  </div>
-  <!-- Parchment bands: cream fade zones for text readability -->
-  <div class="parchment-top"></div>
-  <div class="parchment-bottom"></div>
-  <header>
-    <div class="proj-title">Project Meaning</div>
-    <button type="button"
-            class="why-question-btn"
-            id="whyQuestionBtn"
-            onclick="toggleWhyAnswer()"
-            aria-expanded="false"
-            aria-controls="whyAnswer">Why? The Question that no longer begs. Click here.</button>
-    <div class="why-answer" id="whyAnswer" aria-hidden="true"> <section class="pm-intro-why" style="display:block; max-width:100%;">
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">Why is PROJECT : MEANING heading in this direction?</p>
+  <!-- ===================== SETUP ===================== -->
+  <section id="setup" class="screen active">
+    <div class="stagger">
+      <h1>Imag<em>attern</em></h1>
+      <p class="invocation">This is all imaginary, and this imagination is a <b>pattern of activity</b>. Can you decrypt it? Can you own it? Can you recreate it? Can you not just want, but want deeply and truly, and make that your agency, and then your agency, a reality?</p>
+      <p class="invocation turn">Start back from the beginning. <em>Imagination.</em> You are imagining this right now, and you imagined the awareness you believe yourself to have to imagine it.</p>
+      <p class="invocation bridge">This is the first level, and it is enough. There are deeper ones — where the pattern becomes an equation, and the equations begin to speak to one another — but not yet. For now, only this: learn to read the <em>pattern</em> beneath your own imagining.</p>
 
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">Because meaning is not produced by thought alone. It is produced by an organism. And if an organism is helping generate meaning, then any serious attempt to understand, heal or elevate meaning must go beneath ideas and into the body that is producing them.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">That is why this project heads in this direction. Because by the time a person explains reality, their physiology has often already weighted it. By the time a person forms a conclusion, their state has already influenced what feels true, what feels threatening, what feels possible, what feels hopeless and what feels worth doing.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">Meaning sticks to state. State becomes the eyes before the eyes. State becomes the atmosphere through which perception is filtered before thought finishes forming itself. State becomes the pre-verbal vote cast over reality.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">This is why meaning is not just a philosophy problem, not just a concept problem, and not just a language problem. It is also a nervous system problem, a body problem, a signal problem, a memory problem, and a conditioning problem.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">This is why PROJECT : MEANING begins here. Activation, exercise, training. These are not motivational words. They are structural words.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">Because reinforcement, conditioning and adaptation are already happening. Growth, change and the dyadic tether, the cycle of regeneration or degeneration, are already happening. A human being is not merely living. A human being is being patterned.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">Patterned by repetition. Patterned by physiology. Patterned by relationship. Patterned by memory. Patterned by stress. Patterned by reward. Patterned by the meanings the organism learns to attach to what it repeatedly feels.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">So the question is not whether training is happening. The question is whether it is happening unconsciously, or deliberately.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">This is where emotion has to be re-understood. Emotion is not merely what culture often reduces it to. Not merely a feeling, not merely a mood, not merely a private colour added to experience.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">Emotion is a directional force. A biasing signal. A patterned readiness state. A way the organism allocates salience, value, threat, attention and action. Emotion is the body weighting reality. Emotion is the nervous system leaning the world somewhere.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">Emotion helps determine what becomes foreground, what becomes background, what becomes danger, what becomes invitation, what becomes meaning, what becomes imaginable, and what becomes impossible.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">And underneath emotion sits something deeper: conditioned signal, body-learning, autonomic habit, procedural memory, relational imprint, inherited predisposition, genetic architecture and epigenetic tuning.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">So what many people call “personality” may in large part be the visible weather of deeper invisible adaptation. Not just autobiographical memory, but state memory, threat memory, reward memory, relational memory, protective memory, developmental memory, and embodied memory.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">The body remembers in how it reacts. The body remembers in what it expects. The body remembers in what it prepares for before thought explains anything.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">An organism does not emerge from nowhere and then neutrally choose a worldview. It is recruited into one by what its body has learned is safe, by what its body has learned is dangerous, by what its body has learned to move toward, by what its body has learned to avoid, by what its body has learned to brace against, and by what its body has learned it can trust.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">Emotion, then, is one of the principal currencies through which these deeper layers speak. And meaning is what those currencies purchase.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">This is why every emotional state tends to generate a certain kind of meaning about the world within, and the world at large. Anger is to hostility. Disgust is to rejection. Shame is to concealment. Fear is to threat. Depression is to isolation.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">Happiness is to kindness. Curiosity is to exploration. Openness is to possibility. Peace is to integration. Love is to connection.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">But the deepest issue is not only how single emotions shape meaning. It is how emotional combinations can unlock an entire philosophy. Not just a thought. A philosophy. A lived metaphysic.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">Apathy, depression and anger can become nihilism. Fear, shame and defeat can become submission. Disgust, threat and superiority can become prejudice. Pain, longing and idealisation can become obsession. Pride, insecurity and comparison can become domination.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">These combinations do not merely sit on top of ideology. They can hide behind it, reinforce it, disguise themselves as rationality, and even disappear inside the person living them.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">Invert the pattern, and the philosophy changes. Care, happiness and peace become hope. Agency, warmth and openness become possibility. Safety, coherence and contact become trust. Dignity, groundedness and love become meaning that can build.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">What does this reveal? That many people do not first reason themselves into their worldview. They often feel themselves into it, then rationalise afterward.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">Not because human beings are trivial machines, but because patterned systems produce patterned outputs. And a conditioned organism is a patterned system. The body has priors. The nervous system has habits. Emotion has routes. Attention has grooves. Identity has rehearsals.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">What culture often calls free personality may be, in part, a semi-automated expression of inherited, reinforced and embodied bio-emotional architecture. Personality is not a fixed blueprint. It is the weather of deeper blueprints.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">And beneath emotional weather sits emotional climate. Beneath climate sits conditioning. Beneath conditioning sits memory. Beneath memory sits embodiment. Beneath embodiment sits adaptation.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">A person, then, is not just thinking thoughts. A person is standing at the tip of an ancestral, developmental and relational spear.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">And the consciousness states produced by these emotional intersections? That is the meaning you are bartering with to create every other meaning or purpose in life: every ambition, every relationship, every moral conclusion, every spiritual conclusion, every sense of self, every threshold of courage, and every collapse into despair.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">All of it is negotiated through the meaning-field currently available to the organism. And that field is not neutral. It is shaped by the condition of the body that hosts it.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">This is why PROJECT : MEANING heads downward before it heads upward: downward into state, downward into signal, downward into pattern, and downward into the architecture beneath explanation.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">Because if you do not understand the machinery producing meaning, you will mistake its outputs for truth. You will call conditioned worldview “clarity.” You will call defensive philosophy “insight.” You will call chronic collapse “who I am.” You will call inherited patterning “my nature.” You will call dysregulation “reality.”</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">That is why this project is heading in this direction. It is trying to separate signal from story, sensation from interpretation, pattern from identity, activation from truth, and embodied history from destiny.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">This is why the project moves from observation to intervention. From theory to practice. From diagnosis to training.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">Signal anchoring. Coherence. Interoceptive mapping. State recognition. Meaning differentiation. Consciousness shifting. Embodied retraining.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">Not as vague self-help. As nervous system training.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">Because if the body participates in constructing meaning, then training the body’s participation is not optional. It is central.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">PROJECT : MEANING is heading in this direction because it is trying to solve the problem at the level where the problem is being generated, not merely at the level where the person talks about it.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">It is about understanding how meaning is generated, inherited, embodied, conditioned, distorted, stabilised, upgraded and healed. It is about revealing that many of the meanings people live inside are not as chosen as they assume. And it is about training the organism to reclaim authorship where conditioning once ruled automatically.</p>
-
-  <p style="margin:0 0 1.15em 0; line-height:1.75;">PROJECT : MEANING is the study of how meaning lives in the nervous system, how it crystallises through emotion, how it is shaped by memory, how it inhabits the body, how it scales into consciousness, and how it can be retrained so that a human being is no longer unconsciously bartering with the lowest available meaning-state.</p>
-
-  <p style="margin:0; line-height:1.75;">But instead begins building upward: toward coherence, toward agency, toward flexibility, toward healing, toward dignity, and toward higher meaning.</p>
-</section>  </div>
-    
-  </header>
-
-
-  <!-- ─ STAGE NAVIGATION ICONS ─ placed beneath the vitruvian body.
-       Stage One (Heart Coherence) and Stage Two (Interoceptive Meaning)
-       are the two interactive anchors of the intro screen. The flex-row
-       container auto-centers and will accept further stages without
-       layout change. -->
-  <!-- ─ TOP-LEVEL PATHS ─ Heart opens the stages below; Mind and Body are sibling paths. -->
-  <nav class="pillars" aria-label="Choose a path">
-    <button type="button" class="pillar" id="pillar-heart" aria-pressed="false"
-            onclick="choosePillar('heart')">Heart<span class="pillar-sub">Coherence</span></button>
-    <button type="button" class="pillar" id="pillar-mind" aria-pressed="false"
-            onclick="choosePillar('mind')">Mind<span class="pillar-sub">Cognition</span></button>
-    <button type="button" class="pillar" id="pillar-body" aria-pressed="false"
-            onclick="choosePillar('body')">Body<span class="pillar-sub">Coordination</span></button>
-  </nav>
-
-  <!-- Placeholder shown for paths still in development (Mind / Body) -->
-  <div class="pillar-panel is-hidden" id="pillar-panel">
-    <div class="pp-title" id="pillar-panel-title">Mind</div>
-    <div class="pp-note">This path is in development.</div>
-  </div>
-
-  <div id="stage-icons" class="is-hidden">
-    <div class="stage-icon" id="stage1-icon"
-         role="button"
-         aria-label="Stage One — Heart Coherence"
-         onclick="showInstructions();">
-      
-      <!-- Nine sparkles around the heart — matching Stage 2's count,
-           size range (8-11px), and density. Warm amber tone kept. Delays
-           staggered across the 2.6s cycle at ~0.29s intervals so there's
-           always one near peak. -->
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      <div class="stage-icon-label">Stage One</div>
-      <div class="stage-icon-sublabel">Heart Coherence</div>
-    </div>
-
-    <!-- ─ STAGE TWO ICON — Golden solar mandala, centered directly beneath
-         the Vitruvian figure. Opens Stage Two's instruction screen. ─ -->
-    <div class="stage-icon" id="stage2-icon"
-         role="button"
-         aria-label="Stage Two — Body-Sensation Mapping"
-         onclick="showStage2Preview();">
-      
-      <!-- 10 sparkles — major reduction. Just the 8 cardinal/corner
-           anchors + 2 center overlap. Fades fully between pulses, cycle 3.4s.
-           At any moment only 2-3 sparkles are even visible. -->
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      <div class="stage-icon-label">Stage Two</div>
-      <div class="stage-icon-sublabel">Body-Sensation Mapping</div>
-    </div>
-
-    <!-- ─ STAGE THREE ICON (LOCKED) — State Shifting. Non-interactive;
-         placed on the same horizontal line as Stages One/Two beneath
-         the Vitruvian body. Locked until unlocked by prior stages. ─ -->
-    <div class="stage-icon" id="stage3-icon"
-         role="img"
-         aria-label="Stage Three — State Shifting (Locked)"
-         aria-disabled="true">
-      
-      <div class="stage-icon-label">Stage Three</div>
-      <div class="stage-icon-sublabel">State Shifting</div>
-    </div>
-
-    <!-- ─ STAGE FOUR ICON (LOCKED) — Mirror World. Non-interactive;
-         completes the four-symbol horizontal row of the intro screen. ─ -->
-    <div class="stage-icon" id="stage4-icon"
-         role="img"
-         aria-label="Stage Four — Mirror World (Locked)"
-         aria-disabled="true">
-      
-      <div class="stage-icon-label">Stage Four</div>
-      <div class="stage-icon-sublabel">Mirror World</div>
-    </div>
-  </div>
-
-  <!-- Bottom electrical heart, touch hint, and footer removed:
-       the golden Stage One icon above is now the sole interactive
-       element on this screen. -->
-</div>
-
-<!-- ================================================================
-     SCREEN 2 — INSTRUCTIONS
-     ================================================================ -->
-<div class="screen hidden" id="screen-instructions">
-  <div class="s1-scroll">
-
-    <button class="stage-back" onclick="restartToIntro()">&larr; Main menu</button>
-    <div class="s1-header">
-      <div class="instr-heading">Heart Coherence</div>
-      <div class="instr-sub">Quick Coherence® &middot; HeartMath Institute</div>
-    </div>
-
-    <!-- ── THE EXERCISE (top of the page) ── -->
-    <div class="s1-exercise">
-
-      <!-- start controls, shown before a session -->
-      <div id="s1-start">
-        <div class="s1-ex-lede">
-          Breathe five seconds in, five seconds out through the heart, and let a sincere feeling
-          of love come forward. Choose a length and begin &mdash; you can end whenever you need to.
-        </div>
-        <div class="dur-label">Tap to Begin &middot; Choose Duration</div>
-        <div class="duration-row s1-ex-durations">
-          <button class="dur-btn start" onclick="startWithDuration(900)">15 min</button>
-          <button class="dur-btn start" onclick="startWithDuration(1800)">30 min</button>
-          <button class="dur-btn start" onclick="startWithDuration(3600)">1 hr</button>
-          <button class="dur-btn start" onclick="startWithDuration(7200)">2 hr</button>
-          <button class="dur-btn start" onclick="startWithDuration(10800)">3 hr</button>
-        </div>
-        <div class="s1-ex-note">
-          If attention to the heart feels distressing, open your eyes, shorten the session, and
-          let <em>ease</em> lead before love.
-        </div>
+      <div class="method">
+        <div class="mlabel">The practice · level one</div>
+        <div class="mintro">An auditory n-back is still running underneath — numbers spoken aloud, nothing shown. What changes is what you do in the silence between them.</div>
+        <div class="step"><div class="num">1</div><div class="txt"><b>Let a stream rise.</b> Eyes open or closed — images, sensation, motion, whatever surfaces on its own. Don't force it.</div></div>
+        <div class="step"><div class="num">2</div><div class="txt"><b>Find the pattern, not the details.</b> Not the objects — the cherry, the road, the face — but the <em>relation</em> running through them: what repeats, what drives what, what turns into what, what mirrors or contradicts, what scales, what holds still while the rest moves. A pattern is any regularity you can name — rhythmic, causal, structural, not just a shape.</div></div>
+        <div class="step"><div class="num">3</div><div class="txt"><b>Bind the pattern to the number.</b> When a number is spoken, hand it that pattern to carry.</div></div>
+        <div class="step"><div class="num">4</div><div class="txt"><b>A fresh pattern for each number.</b> Keep streaming; let every new number take its own, drawn from somewhere new.</div></div>
+        <div class="step"><div class="num">5</div><div class="txt"><b>Meet it when it returns.</b> When a number comes back around — N voices ago — its pattern should surface with it. That recognition is your <b>Match</b>.</div></div>
+        <div class="step st-action" id="examplesOpen" role="button" tabindex="0"><div class="num">6</div><div class="txt"><b>See examples.</b> Twenty worked passes across 2-, 3-, 4-, and 5-back — a pattern found in a stream, bound to its number, then regenerated and compared when the number returns. <span class="open-tag">Open&nbsp;↗</span></div></div>
+        <div class="mfoot">The number is only a hook; the pattern is the thing you actually hold. Raise N to hold more of them at once. <b>Decrypt → bind → recognise.</b></div>
       </div>
 
-      <!-- live breathing session, shown once running -->
-      <div id="s1-live" class="is-hidden">
-        <div class="s1-live-bar">
-          <div class="session-title" id="session-title-label">Heart Coherence · Active</div>
-          <div class="session-timer-disp" id="session-timer">15:00</div>
-          <button class="session-end" onclick="endSession()">End</button>
-        </div>
+      <div class="settings-grid">
+      <div class="card">
+        <h2>Session</h2>
 
-        <div class="breath-container" id="breath-container">
-          <div class="breath-stage">
-            <div class="breath-ball" id="breath-ball"></div>
-            <div class="breath-readout">
-              <div class="breath-label" id="breath-label"></div>
-              <div class="breath-countdown" id="breath-cd"></div>
+        <div class="row">
+          <div class="label">N&#8209;Back level
+            <span class="hint">how many steps back to recall · 1–10</span>
+          </div>
+          <div class="control">
+            <div class="stepper" id="nStep">
+              <button data-d="-1" aria-label="decrease">−</button>
+              <div class="val" id="nVal">2</div>
+              <button data-d="1" aria-label="increase">+</button>
             </div>
           </div>
         </div>
 
-        <div class="phase-panel">
-          <div class="phase-step-label" id="phase-step-label">Step 1 · Heart-Focused Breathing</div>
-          <div class="phase-text" id="phase-text">Breathe in gently through the heart. Soften the chest and let the love that is already there come forward.</div>
+        <div class="row" id="adaptRow">
+          <div class="label">Adaptive difficulty
+            <span class="hint">Jaeggi rule: &lt;3 errors → up · &gt;5 → down</span>
+          </div>
+          <div class="control"><button class="toggle on" id="adaptTog" role="switch" aria-checked="true"></button></div>
         </div>
 
-        <div class="coherence-indicators">
-          <div class="ci-row"><div class="ci-dot" id="ci-breath"></div><div class="ci-label">Rhythm</div></div>
-          <div class="ci-row"><div class="ci-dot" id="ci-heart"></div><div class="ci-label">Heart focus</div></div>
-          <div class="ci-row"><div class="ci-dot" id="ci-feeling"></div><div class="ci-label">Feeling</div></div>
+        <div class="row">
+          <div class="label">Passive listening
+            <span class="hint">just listen &amp; answer in your head — no buttons, no score</span>
+          </div>
+          <div class="control"><button class="toggle" id="passTog" role="switch" aria-checked="false"></button></div>
         </div>
 
-        <div class="s1s-progress"><div class="progress-fill" id="progress-fill"></div></div>
+        <div class="row">
+          <div class="label">Guided cues
+            <span class="hint">whisper the loop while you stream</span>
+          </div>
+          <div class="control"><button class="toggle on" id="cueTog" role="switch" aria-checked="true"></button></div>
+        </div>
+
+        <div class="row">
+          <div class="label">Cognitive conflict
+            <span class="hint" id="lureHint">0% lures · n±1 near-misses</span>
+          </div>
+          <div class="control"><input type="range" id="lureRange" min="0" max="75" step="5" value="0"></div>
+        </div>
+
+        <div class="row">
+          <div class="label">Pace
+            <span class="hint">seconds between numbers</span>
+          </div>
+          <div class="control">
+            <select id="paceSel">
+              <option value="1500">1.5 s</option>
+              <option value="2000">2.0 s</option>
+              <option value="2500">2.5 s</option>
+              <option value="3000" selected>3.0 s</option>
+              <option value="4000">4.0 s</option>
+              <option value="5000">5.0 s</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="label">Session length
+            <span class="hint" id="sessionHint">20 min</span>
+          </div>
+          <div class="control"><input type="range" id="sessionRange" min="10" max="190" step="10" value="20"></div>
+        </div>
       </div>
 
-    </div>
-
-    <!-- ── HOW IT WORKS (explanations, beneath the exercise) ── -->
-    <div class="s1-howto">
-      <div class="s1-howto-head">How it works</div>
-
-      <p class="theory-lede">
-        The practice you are about to do is not a visualisation, a relaxation exercise
-        or a spiritual technique in disguise. It is a <em>physiological protocol. </em>
-        A specific breathing cadence paired with a specific quality of felt
-        experience, producing a measurable state the cardiovascular, autonomic,
-        endocrine, and cortical systems enter together. The theory below exists so
-        that you know what is happening in your body when you practise, and why
-        love in particular is the feeling the body is being asked to sustain.
-      </p>
-
-      <div class="theory-grid">
-
-        <div class="theory-card">
-          <div class="theory-card-eyebrow">I &middot; The heart as an intelligent organ</div>
-          <div class="theory-card-title">Why love is already in the cells</div>
-          <div class="theory-card-body">
-            The heart is not a pump with feelings attached. It has its own nervous
-            system of roughly forty thousand sensory neurons (Armour's
-            neurocardiology) that <em>sense, learn and remember independently</em>
-            of the brain. which is why a transplanted, denervated heart continues
-            to beat coordinately. It is also an <strong>endocrine organ</strong>:
-            it synthesises oxytocin, with concentrations in the right atrium roughly
-            nineteen times higher than in uterine tissue (Jankowski et al.,
-            <em>PNAS</em>, 1998). Every experience of love and connection you have ever had.
-            Being held, loving another, being loved. All of it has inscribed itself on this
-            tissue. The feeling of love is not retrieved from memory in the mind;
-            it is <strong>re-activated in tissue that already holds it</strong>. This
-            is why the instruction is to soften the chest and let it surface, not
-            to imagine or construct it.
-          </div>
+      <div class="card">
+        <h2>Audio</h2>
+        <div class="row">
+          <div class="label">Voice</div>
+          <div class="control"><select id="voiceSel"><option>Default</option></select></div>
+        </div>
+        <div class="row">
+          <div class="label">Speaking rate <span class="hint" id="rateHint">1.0×</span></div>
+          <div class="control"><input type="range" id="rateRange" min="0.6" max="1.4" step="0.1" value="1"></div>
+        </div>
+        <div class="row">
+          <div class="label">Check your sound <span class="hint">numbers will be spoken</span></div>
+          <div class="control"><button class="btn sm" id="testBtn">▶ Test voice</button></div>
         </div>
 
-        <div class="theory-card">
-          <div class="theory-card-eyebrow">II &middot; Resonance at 0.1 Hz</div>
-          <div class="theory-card-title">Why the breath is the carrier</div>
-          <div class="theory-card-body">
-            The cardiovascular loop, so the heart, baroreceptors, brainstem, vascular
-            tree; it has an intrinsic transit delay of roughly five seconds, giving it a natural <strong>resonance frequency near 0.1 Hz</strong>
-            (Lehrer &amp; Gevirtz, 2014). When you breathe at about six per minute,
-            respiration, heart rate, and blood pressure phase-align; heart-rate
-            variability amplitude saturates; the vagus nerve modulates the
-            sino-atrial node with each exhale; and the heart-rate trace smooths
-            into a clean sine wave. Balaji &amp; McCraty's analysis of <strong>1.8
-            million sessions</strong> (<em>Scientific Reports</em>, 2025) confirmed
-            this peak across the global population. The breath is not the point.
-            It is the carrier wave that allows the feeling to inscribe itself on
-            physiology.
-          </div>
-        </div>
-
-        <div class="theory-card">
-          <div class="theory-card-eyebrow">III &middot; Why love, not just breath</div>
-          <div class="theory-card-title">What love adds that breath does not</div>
-          <div class="theory-card-body">
-            Breath alone at 0.1&nbsp;Hz produces coherence. Love on top of it
-            recruits four additional pathways. First, the
-            <strong>caregiving-and-reward network</strong> - medial orbitofrontal
-            cortex, anterior cingulate, ventral striatum, VTA - which uniquely
-            deactivates the amygdala and social-judgment circuitry (Bartels &amp;
-            Zeki, 2000, 2004). Second, <strong>oxytocin release</strong>, which
-            potentiates vagal efferent activity and independently suppresses
-            cortisol. Third, a narrow high-amplitude HRV spectral peak that
-            appreciation produces and anger does not, <em>even at matched
-            respiration</em> (McCraty et al., 1995). Fourth - and this is the
-            strongest cellular evidence - loving-kindness meditation protects
-            telomere length where attention-only mindfulness does not (Le Nguyen
-            et al., 2019). The love component, not just the attention component,
-            has cellular consequences.
-          </div>
-        </div>
-
-        <div class="theory-card">
-          <div class="theory-card-eyebrow">IV &middot; Authenticity as physiology</div>
-          <div class="theory-card-title">Why sincerity is not a preference</div>
-          <div class="theory-card-body">
-            The oxytocin–vagal–reward axis does not reliably open for hollow performance. Duchenne-smile research links genuine enjoyment with involuntary eye-muscle recruitment and distinct frontal brain activity, while Gross and Levenson’s suppression work shows that performative emotional control can increase sympathetic load rather than produce clean regulation. But this does not mean feeling cannot be intensified. It means the system must begin from a sincere signal. Once honest warmth is online, attention can locate its bodily coordinates, follow its natural vector, and amplify it through alignment. A small true feeling can become powerful when strengthened along its own trajectory. A large forced feeling collapses because it is imposed against the organism’s truth. The technique therefore does not prohibit intensity; it prohibits falsification. Let the feeling come forward, find its coordinate, then move upward through its line of coherence.
-          </div>
-        </div>
-
-      </div>
-
-      <div class="theory-divider">The Technique</div>
-
-      <div class="depth-content active">
-
-        <div class="step-block">
-          <div class="step-num">01</div>
-          <div>
-            <div class="step-title">Breathe Through the Heart</div>
-            <div class="step-desc">
-              Rest your attention in the centre of the heart. Let the breath flow in and out through that spot. Five seconds in, five seconds out, unforced. At this cadence the cardiovascular system hits its natural resonance near 0.1 Hz and HRV smooths into a clean wave. The breath is the scaffolding.
+        <details class="disclosure">
+          <summary>Advanced — match Jaeggi protocol</summary>
+          <div class="row">
+            <div class="label">Trials per block (base)<span class="hint">total = base + N</span></div>
+            <div class="control">
+              <select id="baseSel">
+                <option value="10">10</option><option value="15">15</option>
+                <option value="20" selected>20</option><option value="25">25</option><option value="30">30</option>
+              </select>
             </div>
           </div>
-        </div>
-
-        <div class="step-block">
-          <div class="step-num">02</div>
-          <div>
-            <div class="step-title">Heart Feeling</div>
-            <div class="step-desc">
-              Activate a sincere feeling of love in the heart. Not as an idea held in the mind, but as a felt sense in the body - it is already there, in the tissue. Soften the chest and let it come forward. Breathe it through the heart as it arrives. This is the regenerative feeling you sustain for the rest of the session.
+          <div class="row">
+            <div class="label">Targets per block<span class="hint">how many matches occur</span></div>
+            <div class="control">
+              <select id="targSel">
+                <option value="4">4</option><option value="5">5</option>
+                <option value="6" selected>6</option><option value="7">7</option><option value="8">8</option>
+              </select>
             </div>
           </div>
-        </div>
-
-        <div class="step-block">
-          <div class="step-num">03</div>
-          <div>
-            <div class="step-title">Deepen</div>
-            <div class="step-desc">
-              Stay with the love and deepen it. The effort stays, never so hard that it takes you away from the feeling, always enough to sustain it and move to a subtler, deeper and more powerful level. The longer it is sustained, the stronger it becomes.
+          <div class="row">
+            <div class="label">Distinct digits<span class="hint">size of the number pool</span></div>
+            <div class="control">
+              <select id="setSel">
+                <option value="6">6 · (1–6)</option>
+                <option value="8" selected>8 · (1–8)</option>
+                <option value="10">10 · (0–9)</option>
+              </select>
             </div>
           </div>
-        </div>
-
-        <div class="instr-safety">
-          If attention to the heart feels distressing, open your eyes, shorten the session, and let <em>ease</em> lead before love.
-        </div>
+        </details>
       </div>
-    </div>
+      </div>
 
-  </div>
+      <div class="actions">
+        <button class="btn primary" id="startBtn">Begin session</button>
+      </div>
+      <div class="warn" id="ttsWarn">Your browser doesn't expose speech synthesis, so numbers can't be spoken here. Try Chrome, Edge, or Safari, and make sure the page has sound permission.</div>
+
+      <div id="histCard" class="card" style="display:none">
+        <h2>Your history</h2>
+        <div class="hist" id="histList"></div>
+        <div class="actions"><button class="btn ghost sm" id="resetBtn" style="flex:0 0 auto;min-width:0">Reset progress</button></div>
+      </div>
+
+      <p class="note"><b>Imagattern, level one.</b> Underneath is an adaptive auditory n-back — spoken digits, the 3-second pacing and 20+N blocks of the Jaeggi et&nbsp;al. protocol — but the task is to stream, find patterns, and bind each one to its number. It's a stripped-down first rung of the "pattern streaming" idea discussed in the brain-training community (the deeper levels add symbolic equations and meta-mapping between patterns). The cognitive claims around these practices are unproven; explore at your own pace.</p>
+    </div>
+  </section>
+
+  <!-- ===================== PLAY ===================== -->
+  <section id="play" class="screen">
+    <div class="readouts">
+      <div class="pill" id="pBlockPill">BLOCK <b id="pBlock">1/20</b></div>
+      <div class="pill">TRIAL <b id="pTrial">0/22</b></div>
+      <div class="pill" id="pTimePill">TIME <b id="pTime">0:00</b></div>
+      <div class="pill">N&#8209;BACK <b id="pN">2</b></div>
+    </div>
+    <div class="stage">
+      <svg class="ringwrap" viewBox="0 0 300 300" aria-hidden="true">
+        <circle class="ring-track" cx="150" cy="150" r="138"></circle>
+        <circle class="progress" id="ring" cx="150" cy="150" r="138"></circle>
+      </svg>
+      <div class="ripple" id="ripple"></div>
+      <div class="orb" id="orb"></div>
+    </div>
+    <div class="listening" id="listening">listen</div>
+    <button class="matchbtn" id="matchBtn">MATCH<span>press A · space · or tap</span></button>
+    <button class="endlink" id="endBtn">End session</button>
+  </section>
+
+  <!-- ===================== RESULTS ===================== -->
+  <section id="results" class="screen">
+    <div class="eyebrow" id="rBlockLabel">Block 1 of 20 complete</div>
+    <div class="verdict" id="verdict">Hold at N=2</div>
+    <div class="verdict-sub" id="verdictSub">3–5 errors · level unchanged</div>
+    <div class="statgrid">
+      <div class="stat"><div class="k">Hits</div><div class="v" id="sHits">5<small>/6</small></div></div>
+      <div class="stat"><div class="k">Misses</div><div class="v" id="sMiss">1</div></div>
+      <div class="stat"><div class="k">False alarms</div><div class="v" id="sFa">0</div></div>
+      <div class="stat"><div class="k">Errors total</div><div class="v" id="sErr">1</div></div>
+      <div class="stat" id="sLureCell" style="display:none"><div class="k">Lures held</div><div class="v" id="sLure">0<small>/0</small></div></div>
+    </div>
+    <div class="progressbar" id="rBarWrap"><i id="rBar" style="width:0%"></i></div>
+    <div class="actions">
+      <button class="btn primary" id="contBtn">Continue</button>
+      <button class="btn ghost" id="stopBtn">Finish &amp; review</button>
+    </div>
+  </section>
+
+  <!-- ===================== SUMMARY ===================== -->
+  <section id="summary" class="screen">
+    <div class="eyebrow">Session complete</div>
+    <h1 style="font-size:clamp(32px,8vw,52px)">Nicely<br><em>done.</em></h1>
+    <div class="statgrid" id="zGrid"></div>
+    <div class="card" id="zChipsCard">
+      <h2>Block by block</h2>
+      <div class="chips" id="zChips"></div>
+    </div>
+    <div class="actions">
+      <button class="btn primary" id="againBtn">New session</button>
+      <button class="btn ghost" id="homeBtn">Back to setup</button>
+    </div>
+  </section>
+
+  <!-- ===================== EXAMPLES ===================== -->
+  <section id="examples" class="screen">
+    <button class="endlink" id="exBack" style="margin-top:0;padding-left:0">← back</button>
+    <div class="eyebrow">Worked passes</div>
+    <h1 style="font-size:clamp(30px,7vw,46px);margin-top:.08em">See it <em>run</em>.</h1>
+    <p class="ex-legend">Every trial does two things at once. <span class="mk">pair</span> — a number is heard, a stream rises, you read its <em>pattern</em> (the relation running through it, not its details) and bind pattern→number. <span class="mk">↺ regenerate</span> — once N numbers have passed, you bring back the pattern you bound N trials ago. <span class="mk">⇄ compare</span> — you set that regenerated pattern beside the one you just discerned and ask whether they belong to the <em>same number</em>: same ▸ <b style="color:var(--good)">Match, press</b>; different ▸ hold. The freshly-discerned pattern is then the one carried forward, to be regenerated and compared N trials on. Each pass below is shown trial by trial; the lit squares mark the one pair that matches.</p>
+    <div id="exList"></div>
+    <div class="actions"><button class="btn primary" id="exDone">Back to setup</button></div>
+  </section>
+
+  <div class="countdown" id="countdown"><span id="countNum">3</span></div>
 </div>
 
-<div class="screen hidden" id="screen-stage2">
-  <div class="s2-scroll">
-
-    <button class="stage-back" onclick="restartStage2ToIntro()">&larr; Main menu</button>
-    <div class="s2-header">
-      <div class="s2-eyebrow">Stage Two</div>
-      <div class="s2-title">Body-Sensation Mapping</div>
-      <div class="s2-subtitle">Feeling the Architecture Within</div>
-    </div>
-
-    <!-- ── THE EXERCISE (top of the page) ── -->
-    <div class="s2-exercise">
-
-      <!-- start controls, shown before a session -->
-      <div id="s2-start">
-        <div class="s2-ex-lede">
-          Pick one sensation and walk it through the practice. Choose a length and begin &mdash;
-          you can end whenever you need to.
-        </div>
-        <div class="dur-label">Choose Duration &middot; Tap to Begin</div>
-        <div class="duration-row s2-ex-durations">
-          <button class="dur-btn" onclick="startStage2WithDuration(900)">15 min</button>
-          <button class="dur-btn" onclick="startStage2WithDuration(1800)">30 min</button>
-          <button class="dur-btn" onclick="startStage2WithDuration(3600)">60 min</button>
-        </div>
-        <div class="s2-ex-note">
-          Start with 15 minutes for the basics &mdash; picking one sensation and walking it
-          through the seven questions cleanly. Use 30 once you want the fine-noticing warm-up
-          and the confidence check; 60 only for the test-a-fear protocol, and only after several
-          steady sessions. If activation climbs past what you can handle, end the session no
-          matter which phase you're in.
-        </div>
-      </div>
-
-      <!-- live guided session, shown once running -->
-      <div id="s2-live" class="is-hidden">
-        <div class="s2-live-bar">
-          <div class="session-timer-disp" id="s2s-timer">15:00</div>
-          <button class="session-end" onclick="endStage2Session()">End</button>
-        </div>
-        <div class="s2s-orbit-label" id="s2s-center">Arrive</div>
-        <div class="s2s-phase-label" id="s2s-phase-label">Phase &middot; Arrive</div>
-        <div class="s2s-next">Next step in <span id="s2s-countdown">0:30</span></div>
-        <div class="s2s-prompt" id="s2s-prompt">Let the breath stay slow, about five to six breaths per minute. Feel the ground under you. Let one sensation in your body come forward on its own. Whatever it is, wherever it is. You're not searching. You're receiving. That first sensation is the one you'll work with for the whole session.</div>
-        <div class="s2s-chain" id="s2s-chain">
-          <div class="s2s-chip" data-dim="0" role="button" tabindex="0" onclick="peekStage2Dimension(0)">Location</div>
-          <div class="s2s-chip" data-dim="1" role="button" tabindex="0" onclick="peekStage2Dimension(1)">Quality</div>
-          <div class="s2s-chip" data-dim="2" role="button" tabindex="0" onclick="peekStage2Dimension(2)">Intensity</div>
-          <div class="s2s-chip" data-dim="3" role="button" tabindex="0" onclick="peekStage2Dimension(3)">Movement</div>
-          <div class="s2s-chip" data-dim="4" role="button" tabindex="0" onclick="peekStage2Dimension(4)">Direction</div>
-          <div class="s2s-chip" data-dim="5" role="button" tabindex="0" onclick="peekStage2Dimension(5)">Coherence</div>
-          <div class="s2s-chip" data-dim="6" role="button" tabindex="0" onclick="peekStage2Dimension(6)">Meaning-tone</div>
-        </div>
-        <div class="s2s-progress"><div class="s2s-progress-fill" id="s2s-progress-fill"></div></div>
-      </div>
-
-    </div>
-
-    <!-- ── HOW TO DO IT (explanations, beneath the exercise) ── -->
-    <div class="s2-howto">
-      <div class="s2-howto-head">How to do it</div>
-
-      <div class="s2-lede">
-        Stage One calms the body. Stage Two teaches you to <strong>read</strong> what's in the
-        calmed body. These are two halves of one practice. Stage One turns the noise down; Stage
-        Two lets you hear what was always playing underneath. What you used to call &ldquo;a bad
-        mood&rdquo; turns out to have a shape. What you used to take as &ldquo;who I am&rdquo; turns
-        out to be a pattern. What felt inevitable turns out to be something you can work with.
-      </div>
-
-      <div class="s2-teach">
-        <div class="s2-teach-title">A sensation is what an emotion is made of</div>
-        <p>
-          An emotion is not a separate thing sitting on top of the body &mdash; at the felt level it
-          <em>is</em> a pattern of sensation you have learned to name. Underneath the word there is
-          always something physical: a place, a weight, a temperature, a direction of movement.
-          <em>Sadness</em>, before it is the word, is often a heaviness or a downward pull in the
-          chest, a thickening in the throat, a hollow sinking low in the belly. <em>Joy</em>, before
-          it is the word, is often a lightness and an opening in that same chest, a warmth spreading
-          outward, a quickening that rises rather than sinks. Same region of the body, opposite
-          architecture. The sensation and the feeling are not two events &mdash; the sensation
-          <strong>is</strong> the feeling, met before it has been named.
-        </p>
-        <div class="s2-teach-title">The mapping sharpens with practice</div>
-        <p>
-          At first the body speaks in a blur &mdash; &ldquo;I feel bad,&rdquo; &ldquo;I feel
-          off&rdquo; &mdash; one undivided mass. Each time you map a sensation cleanly (where it is,
-          what it feels like, which way it moves) you lay down one more entry in a private dictionary
-          that links sensation to the emotion it carries. Over weeks that map sharpens. You begin to
-          recognise a feeling by its early shape &mdash; the faint tightening high in the chest that
-          pulls attention toward what you lack &mdash; and to name it (&ldquo;this is the front edge
-          of anxiety&rdquo;) before the story it wants to tell takes hold. Accuracy improves, and so
-          does speed: you catch the feeling at its sensory root, while it is still small and workable,
-          instead of only later, once it has hardened into a mood or a belief about who you are.
-        </p>
-        <div class="s2-teach-title">Walking one feeling down to its body</div>
-        <p>
-          Say a vague unease shows up. <em>Where:</em> high in the chest, no clear edge.
-          <em>Quality:</em> a tight, buzzing pressure. <em>Intensity:</em> a six &mdash; louder as a
-          feeling than as a sensation. <em>Movement:</em> a fast flutter, coming in waves.
-          <em>Direction:</em> pulling up and inward toward the throat. <em>Coherence:</em> the raw
-          sensation, an image of something going wrong, and an urge to brace all point the same way.
-          <em>Tone, then name:</em> unpleasant, urging you to act &mdash; this is anxiety, the dread
-          of something not yet here. Read this way, it stops being &ldquo;I am anxious&rdquo; (a fact
-          about who you are) and becomes &ldquo;there is a tight, rising flutter in my chest reading
-          the future as a threat&rdquo; &mdash; a passing state you can question, not a verdict. Run
-          the same walk on joy and you find the opposite map: low and broad in the chest, warm, light,
-          opening outward, everything agreeing. Do this enough and the body becomes legible.
-        </p>
-      </div>
-
-      <div class="s2-law">
-        <div class="s2-law-label">Core Design Law</div>
-        <div class="s2-law-text">
-          Notice &rarr; describe &rarr; rate your confidence &rarr; test under pressure &rarr; see
-          how the body is shaping meaning. See clearly before interpreting. A strong feeling isn't
-          automatically true. Feeling confident isn't the same as being right.
-        </div>
-      </div>
-
-      <div class="s2-modules">
-        <div class="s2-module">
-          <div class="s2-mod-name">Finding Your Anchor</div>
-          <div class="s2-mod-desc">
-            Learn to put your attention <em>inside</em> a specific part of your body and hold it
-            there. A light hand on the upper chest, the side ribs, or the lower belly can help
-            at first - once attention can stay on its own, the hand comes away. The point is
-            steadiness: one region, held.
-          </div>
-        </div>
-
-        <div class="s2-module">
-          <div class="s2-mod-name">Fine Noticing</div>
-          <div class="s2-mod-desc">
-            Put two very similar inner states next to each other, for instance breath in versus
-            breath out, just-before-swallowing versus just-after, hand on your chest versus hand
-            lifted - and judge which one carries the stronger sensation. Small, honest comparisons
-            train the eye for what's actually there, as opposed to what you expect or hope is there.
-          </div>
-        </div>
-
-        <div class="s2-module">
-          <div class="s2-mod-name">The Seven Questions</div>
-          <div class="s2-mod-desc">
-            Pick one sensation in your body and walk it through seven questions:
-            <em>where is it &middot; what does it feel like &middot; how strong is it &middot; is it
-            moving &middot; which direction &middot; is it one thing or several &middot; what's its
-            tone</em>. Describe in the simplest physical words. No interpretation until the full
-            walk is done.
-          </div>
-        </div>
-
-        <div class="s2-module">
-          <div class="s2-mod-name">Testing a Fear</div>
-          <div class="s2-mod-desc">
-            When you're steady enough, deliberately raise a sensation you've been avoiding -
-            a faster heart, breathlessness, heat, trembling - and watch what you feared would
-            happen fail to happen. You are not trying to make the sensation go away. You are
-            giving the body a chance to learn, first-hand, that the sensation and the disaster
-            aren't the same thing. Small doses. Known exit. Only after Stage One is solid.
-          </div>
-        </div>
-
-        <div class="s2-module">
-          <div class="s2-mod-name">From Sensation to Meaning</div>
-          <div class="s2-mod-desc">
-            Only after you've mapped a sensation clearly, watch how the body turns it into
-            meaning: <em>raw sensation &rarr; what grabs your attention &rarr; the interpretation
-            you jump to &rarr; what the body wants to do next</em>. See each step form. Name the
-            emotion in a single word if one fits. Watch the bridge build, and don't automatically
-            cross it just because it's there.
-          </div>
-        </div>
-      </div>
-
-      <div class="s2-closing">
-        Stage Two exists to make your inner life readable enough that you can actually <em>work
-        with it</em>. If you can't see it, you can't shape it.
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<!-- Stage Two completion overlay -->
-<div id="stage2-completion">
-  <div class="s2c-title">Field Mapped</div>
-  <div class="s2c-text">
-    You moved from calming the body to reading it. You held one sensation, walked it through
-    seven questions, rated your confidence separately from what you saw, and watched how the
-    body turns a sensation into a meaning, without automatically going along with it. What
-    felt like one solid thing is actually three separate things: a sensation, an
-    interpretation, and what the body wants to do next. Carry this into the rest of your day:
-    every strong feeling is now a starting point, not a verdict.
-  </div>
-  <button class="s2c-btn" onclick="restartStage2ToIntro()">Return to Beginning</button>
-</div>
-
-<!-- Completion overlay -->
-<div class="completion-overlay" id="completion">
-  <div class="completion-title">Session Complete</div>
-  <div class="completion-text">
-    You trained the nervous system through love. Carry the slower breath, the open chest, and the warmth you generated into your next moment. Love leaves an ordered signature in the body. That signature, once cultivated, is always available again.
-  </div>
-  <button class="restart-btn" onclick="restartToIntro()">Return to Beginning</button>
-</div>
-
-<!-- ================================================================
-     JAVASCRIPT
-     ================================================================ -->
 <script>
-'use strict';
-var $ = function(id){ return document.getElementById(id); };
-function pad(n){ return String(n).padStart(2,'0'); }
+(function(){
+  "use strict";
 
-/* ---------- navigation ---------- */
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(function(s){ s.classList.add('hidden'); });
-  var el = $(id);
-  if(el){ el.classList.remove('hidden'); el.scrollTop = 0; }
-  window.scrollTo(0,0);
-}
-function showInstructions(){ s1ShowStart(); showScreen('screen-instructions'); }
-function s1ShowStart(){
-  var st=$('s1-start'), lv=$('s1-live');
-  if(lv) lv.classList.add('is-hidden');
-  if(st) st.classList.remove('is-hidden');
-}
-function showStage2Preview(){ s2ShowStart(); showScreen('screen-stage2'); }
-function showStage2Instructions(){ s2ShowStart(); showScreen('screen-stage2'); }
-function s2ShowStart(){
-  var st=$('s2-start'), lv=$('s2-live');
-  if(lv) lv.classList.add('is-hidden');
-  if(st) st.classList.remove('is-hidden');
-}
+  /* ---------------- elements ---------------- */
+  const $ = id => document.getElementById(id);
+  const screens = {setup:$("setup"), play:$("play"), results:$("results"), summary:$("summary"), examples:$("examples")};
+  function show(name){
+    Object.values(screens).forEach(s=>s.classList.remove("active"));
+    screens[name].classList.add("active");
+    state.screen = name;
+    window.scrollTo({top:0});
+  }
 
-/* top-level path chooser: Heart reveals the stages; Mind / Body show a placeholder */
-function choosePillar(name){
-  ['heart','mind','body'].forEach(function(p){
-    var b = $('pillar-'+p);
-    if(b){ var on = (p === name); b.classList.toggle('pillar-active', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); }
-  });
-  var stages = $('stage-icons'), panel = $('pillar-panel');
-  if(name === 'heart'){
-    if(stages) stages.classList.remove('is-hidden');
-    if(panel)  panel.classList.add('is-hidden');
-  } else {
-    if(stages) stages.classList.add('is-hidden');
-    if(panel){
-      panel.classList.remove('is-hidden');
-      var t = $('pillar-panel-title'); if(t) t.textContent = (name === 'mind') ? 'Mind' : 'Body';
+  const DIGIT_ORDER = ["1","2","3","4","5","6","7","8","9","0"];
+  const CEIL = 10;
+
+  /* ---------------- state ---------------- */
+  const settings = {
+    startN: 2, adaptive: true, paceMs: 3000,
+    base: 20, targets: 6, setSize: 8,
+    sessionMin: 20, rate: 1.0, voiceURI: "", guided: true, lurePct: 0, passive: false
+  };
+  const state = {
+    screen:"setup", n:2, blockIndex:0, accepting:false,
+    block:null, session:null, timer:null, cueTimer:null, voices:[]
+  };
+  // session length is time-based; the top slider step (>180) means run with no time limit
+  function sessionInfinite(){ return settings.sessionMin > 180; }
+  function sessionMs(){ return sessionInfinite() ? Infinity : settings.sessionMin * 60000; }
+  function elapsedMs(){ return state.session ? Date.now() - state.session.start : 0; }
+  function timeUp(){ return !sessionInfinite() && elapsedMs() >= sessionMs(); }
+  function fmtClock(ms){
+    let s = Math.max(0, Math.round(ms/1000));
+    const h = Math.floor(s/3600); s %= 3600;
+    const m = Math.floor(s/60); s %= 60;
+    return h>0 ? `${h}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}` : `${m}:${String(s).padStart(2,"0")}`;
+  }
+  function fmtSessionLabel(min){
+    if(min > 180) return "∞ infinite time";
+    const h = Math.floor(min/60), m = min%60;
+    if(h===0) return `${m} min`;
+    return m===0 ? `${h} hr` : `${h} hr ${m} min`;
+  }
+
+  /* ---------------- persistence (graceful) ---------------- */
+  async function sGet(k){ try{ if(!window.storage) return null; const r=await window.storage.get(k); return r?r.value:null; }catch(e){ return null; } }
+  async function sSet(k,v){ try{ if(!window.storage) return; await window.storage.set(k, v); }catch(e){} }
+  async function sDel(k){ try{ if(!window.storage) return; await window.storage.delete(k); }catch(e){} }
+  const SETKEY="auditory_nback_settings_v1", HISTKEY="auditory_nback_history_v1";
+
+  /* ---------------- speech ---------------- */
+  const synth = window.speechSynthesis;
+  if(!synth){ $("ttsWarn").style.display="block"; }
+  function loadVoices(){
+    if(!synth) return;
+    state.voices = synth.getVoices() || [];
+    const sel = $("voiceSel");
+    const en = state.voices.filter(v=>/^en/i.test(v.lang));
+    const list = en.length? en : state.voices;
+    sel.innerHTML = '<option value="">Default (browser)</option>' +
+      list.map(v=>`<option value="${v.voiceURI}">${v.name} — ${v.lang}</option>`).join("");
+    if(settings.voiceURI) sel.value = settings.voiceURI;
+  }
+  if(synth){ loadVoices(); synth.onvoiceschanged = loadVoices; }
+
+  function speak(text){
+    if(!synth) return;
+    try{ synth.cancel(); }catch(e){}
+    const u = new SpeechSynthesisUtterance(String(text));
+    u.rate = settings.rate; u.pitch = 1; u.volume = 1;
+    if(settings.voiceURI){
+      const v = state.voices.find(v=>v.voiceURI===settings.voiceURI);
+      if(v) u.voice = v;
+    }
+    try{ synth.speak(u); }catch(e){}
+  }
+
+  /* ---------------- sequence generation ---------------- */
+  function pool(){ return DIGIT_ORDER.slice(0, settings.setSize); }
+
+  // pick a value, excluding `must` outright and `nice` if any options remain
+  function pickVal(P, must, nice){
+    let o = P.filter(v => must.indexOf(v)<0 && nice.indexOf(v)<0);
+    if(!o.length) o = P.filter(v => must.indexOf(v)<0);
+    if(!o.length) o = P.slice();
+    return o[(Math.random()*o.length)|0];
+  }
+  function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=(Math.random()*(i+1))|0; const t=arr[i]; arr[i]=arr[j]; arr[j]=t; } return arr; }
+
+  function generateBlock(n){
+    const P = pool();
+    const L = settings.base + n;
+
+    // true-target positions (current == n back)
+    const eligible = [];
+    for(let i=n;i<L;i++) eligible.push(i);
+    const want = Math.min(settings.targets, eligible.length);
+    const targetPos = new Set(shuffle(eligible.slice()).slice(0, want));
+
+    // lure positions: non-targets where an n-1 or n+1 near-match is reachable
+    const lureElig = [];
+    for(let i=1;i<L;i++){
+      if(targetPos.has(i)) continue;
+      const canM1 = (n-1>=1) && (i-(n-1)>=0);
+      const canP1 = (i-(n+1)>=0);
+      if(canM1 || canP1) lureElig.push(i);
+    }
+    let lureWant = Math.round(L * (settings.lurePct||0) / 100);
+    lureWant = Math.min(lureWant, lureElig.length);
+    const lurePos = new Set(shuffle(lureElig.slice()).slice(0, lureWant));
+
+    const seq = new Array(L), isT = new Array(L).fill(false), isL = new Array(L).fill(false);
+    for(let i=0;i<L;i++){
+      if(targetPos.has(i)){
+        seq[i] = seq[i-n]; isT[i] = true;
+      } else if(lurePos.has(i)){
+        // copy a value from n-1 or n+1 back, but never equal to the n-back value (would be a real target)
+        const cands = [];
+        if(n-1>=1 && i-(n-1)>=0) cands.push(n-1);
+        if(i-(n+1)>=0) cands.push(n+1);
+        shuffle(cands);
+        let placed = false;
+        for(const o of cands){
+          const v = seq[i-o];
+          if(i-n<0 || v !== seq[i-n]){ seq[i]=v; isL[i]=true; placed=true; break; }
+        }
+        if(!placed){
+          const must = (i-n>=0)?[seq[i-n]]:[];
+          const nice = [];
+          if(n-1>=1 && i-(n-1)>=0) nice.push(seq[i-(n-1)]);
+          if(i-(n+1)>=0) nice.push(seq[i-(n+1)]);
+          seq[i] = pickVal(P, must, nice);
+        }
+      } else {
+        // ordinary non-target: never a true target; avoid accidental near-matches when possible
+        const must = (i-n>=0)?[seq[i-n]]:[];
+        const nice = [];
+        if(n-1>=1 && i-(n-1)>=0) nice.push(seq[i-(n-1)]);
+        if(i-(n+1)>=0) nice.push(seq[i-(n+1)]);
+        seq[i] = pickVal(P, must, nice);
+      }
+    }
+    const lures = isL.reduce((a,c)=>a+(c?1:0),0);
+    return {L, seq, isT, isL, targets:want, nonTargets:L-want, lures, n};
+  }
+
+  /* ---------------- animation helpers ---------------- */
+  function restart(el, cls){ el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+  function flash(el, cls, ms){ el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); setTimeout(()=>el.classList.remove(cls), ms); }
+  const ring = $("ring");
+  const C = 2 * Math.PI * 138;
+  ring.style.setProperty("--c", C.toFixed(1));
+
+  /* ---------------- session flow ---------------- */
+  function startSession(){
+    if(synth){ try{ synth.cancel(); }catch(e){} }
+    state.n = settings.startN;
+    state.blockIndex = 0;
+    state.session = { blocks:[], start: Date.now(), trials:0 };
+    // passive listening: no button, no scoring; otherwise show the match control
+    $("matchBtn").style.display = settings.passive ? "none" : "";
+    beginBlockWithCountdown();
+  }
+
+  function beginBlockWithCountdown(){
+    show("play");
+    paintReadouts(true);
+    let c = 3;
+    const cd = $("countdown"), num = $("countNum");
+    cd.classList.add("show"); num.textContent = c; num.style.animation="none"; void num.offsetWidth; num.style.animation="";
+    const tick = ()=>{
+      c--;
+      if(c<=0){ cd.classList.remove("show"); runBlock(); return; }
+      num.textContent = c; num.style.animation="none"; void num.offsetWidth; num.style.animation="";
+      state.timer = setTimeout(tick, 900);
+    };
+    state.timer = setTimeout(tick, 900);
+  }
+
+  // continuous generator: produce the next digit of an unbounded n-back stream,
+  // relative to the actual preceding stream (so targets/lures stay correct, no seams)
+  function nearVals(hist, i, n){
+    const a = [];
+    if(n-1>=1 && i-(n-1)>=0) a.push(hist[i-(n-1)]);
+    if(i-(n+1)>=0) a.push(hist[i-(n+1)]);
+    return a;
+  }
+  function genNextDigit(b){
+    const P = pool(), n = b.n, hist = b.seq, i = hist.length;
+    let val, isTarget=false, isLure=false;
+    if(i < n){
+      val = P[(Math.random()*P.length)|0];
+    } else {
+      const nbk = hist[i-n];
+      const pT = Math.min(0.9, settings.targets / (settings.base + n));
+      let pL = (settings.lurePct||0)/100;
+      if(pT + pL > 0.95) pL = Math.max(0, 0.95 - pT);
+      const r = Math.random();
+      if(r < pT){
+        val = nbk; isTarget = true;
+      } else if(r < pT + pL){
+        const cands = [];
+        if(n-1>=1 && i-(n-1)>=0) cands.push(n-1);
+        if(i-(n+1)>=0) cands.push(n+1);
+        shuffle(cands);
+        for(const o of cands){ const v=hist[i-o]; if(v!==nbk){ val=v; isLure=true; break; } }
+        if(!isLure) val = pickVal(P, [nbk], nearVals(hist,i,n));
+      } else {
+        val = pickVal(P, [nbk], nearVals(hist,i,n));
+      }
+    }
+    b.seq[i]=val; b.isT[i]=isTarget; b.isL[i]=isLure;
+    if(isTarget) b.targets++;
+    if(isLure) b.lures++;
+  }
+
+  function runBlock(){
+    if(settings.passive){
+      // one unbounded, lazily-generated stream — no block boundaries, no trial cap
+      state.block = { continuous:true, n:state.n, L:Infinity, seq:[], isT:[], isL:[], targets:0, lures:0 };
+    } else {
+      state.block = generateBlock(state.n);
+    }
+    Object.assign(state.block, {index:-1, responded:false, hits:0, misses:0, fa:0, cr:0, lureFa:0});
+    paintReadouts();
+    nextTrial();
+  }
+
+  function nextTrial(){
+    const b = state.block;
+    // continuous (passive) stream ends only when the chosen time runs out
+    if(b.continuous && timeUp()){ finishSession(); return; }
+    b.index++;
+    if(b.index >= b.L){ endBlock(); return; }
+    if(b.continuous && b.seq[b.index] === undefined){ genNextDigit(b); }
+    b.responded = false;
+    state.accepting = true;
+    if(state.session) state.session.trials++;
+    paintReadouts();
+    clearTimeout(state.cueTimer);
+    if(settings.guided){
+      $("listening").textContent = "stream";
+      state.cueTimer = setTimeout(()=>{
+        if(state.screen==="play" && state.accepting && state.block && !state.block.responded){
+          $("listening").textContent = "pattern";
+        }
+      }, Math.round(settings.paceMs*0.4));
+    } else {
+      $("listening").textContent = "listen";
+    }
+    // visuals
+    flash($("orb"), "pulse", 640);
+    ring.classList.remove("run"); void ring.offsetWidth;
+    ring.style.setProperty("--dur", settings.paceMs+"ms");
+    ring.classList.add("run");
+    // audio
+    speak(b.seq[b.index]);
+    // end of trial window
+    state.timer = setTimeout(()=>{ endTrial(); nextTrial(); }, settings.paceMs);
+  }
+
+  function endTrial(){
+    const b = state.block;
+    state.accepting = false;
+    if(settings.passive) return;
+    const t = b.isT[b.index];
+    if(t){ if(b.responded) b.hits++; else b.misses++; }
+    else {
+      if(b.responded){ b.fa++; if(b.isL[b.index]) b.lureFa++; }
+      else b.cr++;
     }
   }
-}
 
-function toggleWhyAnswer(){
-  var btn = $('whyQuestionBtn'), ans = $('whyAnswer');
-  if(!ans) return;
-  var open = ans.classList.toggle('show');
-  if(btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-  ans.setAttribute('aria-hidden', open ? 'false' : 'true');
-}
-
-/* ============================ STAGE ONE ============================ */
-const PHASES = {
-  early: {
-    inhale: { label: 'Step 1 · Heart-Focused Breathing',
-      text: 'Breathe in gently through the heart. Soften the chest. The love is already in the body, let it come forward on its own.' },
-    exhale: { label: 'Step 1 · Heart-Focused Breathing',
-      text: 'Breathe out slowly through the heart. Unhurried. The rhythm alone is already quieting the nervous system.' }
-  },
-  middle: {
-    inhale: { label: 'Step 2 · Heart Feeling',
-      text: 'Breathe the love in. Not the idea of it, the felt warmth already present in the chest. Let it move through you.' },
-    exhale: { label: 'Step 2 · Heart Feeling',
-      text: 'Breathe the love out through the heart. You are training coherence through the signal itself.' }
-  },
-  late: {
-    inhale: { label: 'Step 3 · Deepen',
-      text: 'Breathe the love in. Deepen it. Move to a subtler, deeper and more powerful level.' },
-    exhale: { label: 'Step 3 · Deepen',
-      text: 'Breathe the love out. Sustain it. The longer it is held, the stronger it becomes.' }
+  function handleResponse(){
+    if(settings.passive) return;
+    if(state.screen!=="play" || !state.accepting || !state.block) return;
+    const b = state.block;
+    if(b.responded) return;
+    b.responded = true;
+    flash($("ripple"), "go", 720);
+    flash($("matchBtn"), "hit", 160);
+    $("listening").textContent = "✓ marked";
   }
-};
 
-var s1 = { total:0, rem:0, tick:null, bTo:null, bSec:null, phase:'inhale' };
-
-function s1PhaseKey(){
-  var p = 1 - s1.rem / s1.total;
-  return p < 0.33 ? 'early' : (p < 0.66 ? 'middle' : 'late');
-}
-function s1Timer(){
-  var t = $('session-timer'); if(t) t.textContent = pad(Math.floor(s1.rem/60)) + ':' + pad(s1.rem%60);
-}
-function s1Progress(){
-  var f = $('progress-fill'); if(f) f.style.width = ((1 - s1.rem/s1.total)*100).toFixed(2) + '%';
-}
-function s1Activate(id){ var e=$(id); if(e) e.classList.add('active'); }
-
-/* ---- temple bell: a soft, warm singing-bowl tone, lightly shimmering, in a long temple reverb. ----
-   No voices, no ambient drone. A near-pure low-ish fundamental with a slow detuned twin (a
-   gentle living shimmer), a soft octave, and one quiet inharmonic partial for true bowl
-   character — at this pitch that overtone lands near 950 Hz, well clear of the harsh 2-5 kHz
-   band, so it adds beauty without biting. The core tone is gently widened in stereo; a long,
-   warm convolution reverb gives the spacious, serene tail of a temple hall. Slow swelling
-   attack (no struck "ping"), quiet by design. */
-var _actx = null, _verb = null;
-function _audio(){
-  if(_actx) return _actx;
-  try { var AC = window.AudioContext || window.webkitAudioContext; if(AC) _actx = new AC(); }
-  catch(e){ _actx = null; }
-  return _actx;
-}
-function _reverbBus(ac){
-  if(_verb) return _verb;
-  // long impulse response: exponentially-decaying stereo noise, low-passed for a warm (not dead) tail
-  var sr = ac.sampleRate, len = Math.floor(sr * 4.5), buf = ac.createBuffer(2, len, sr);
-  for(var ch = 0; ch < 2; ch++){
-    var d = buf.getChannelData(ch), last = 0;
-    for(var i = 0; i < len; i++){
-      var env = Math.pow(1 - i / len, 2.5);
-      var n = (Math.random() * 2 - 1) * env;
-      last = last + 0.10 * (n - last);   // one-pole lowpass (~600 Hz) -> warm, spacious, no hiss
-      d[i] = last;
+  function endBlock(){
+    const b = state.block;
+    const errors = b.misses + b.fa;
+    const playedN = b.n;
+    let verdict = "hold";
+    if(settings.adaptive){
+      if(errors < 3 && state.n < CEIL){ state.n++; verdict="up"; }
+      else if(errors > 5 && state.n > 1){ state.n--; verdict="down"; }
+      else verdict="hold";
     }
+    state.session.blocks.push({n:playedN, hits:b.hits, misses:b.misses, fa:b.fa, cr:b.cr, targets:b.targets, errors, lures:b.lures, lureFa:b.lureFa});
+    state.blockIndex++;
+    showResults(b, playedN, verdict, errors);
   }
-  var conv = ac.createConvolver(); conv.buffer = buf;     // normalize=true keeps level steady
-  var wlp  = ac.createBiquadFilter(); wlp.type = 'lowpass'; wlp.frequency.value = 1800; wlp.Q.value = 0.2;
-  var wet  = ac.createGain(); wet.gain.value = 0.55;
-  var dry  = ac.createGain(); dry.gain.value = 0.90;
-  var send = ac.createGain(); send.gain.value = 1;
-  send.connect(dry); send.connect(conv); conv.connect(wlp); wlp.connect(wet);
-  dry.connect(ac.destination); wet.connect(ac.destination);
-  _verb = send;
-  return _verb;
-}
-function bowl(fund, peak, decay){
-  var ac = _audio(); if(!ac) return;
-  if(ac.state === 'suspended'){ try{ ac.resume(); }catch(e){} }
-  var dest = _reverbBus(ac);
-  var t = ac.currentTime;
-  peak  = (peak  == null) ? 0.08 : peak;
-  decay = decay || 3.5;
 
-  // gentle lowpass that closes as it decays -> mellow throughout, guarantees nothing bright
-  var lp = ac.createBiquadFilter();
-  lp.type = 'lowpass'; lp.Q.value = 0.3;
-  lp.frequency.setValueAtTime(2600, t);
-  lp.frequency.exponentialRampToValueAtTime(1100, t + decay * 0.5);
-  lp.connect(dest);
+  function showResults(b, playedN, verdict, errors){
+    const done = timeUp();
+    $("rBlockLabel").textContent = `Block ${state.blockIndex} complete`;
+    const v = $("verdict"), vs = $("verdictSub");
+    v.className = "verdict "+verdict;
+    if(verdict==="up"){ v.textContent = `Level up → N=${state.n}`; vs.textContent = `${errors} error${errors===1?"":"s"} · clean enough to climb`; }
+    else if(verdict==="down"){ v.textContent = `Ease down → N=${state.n}`; vs.textContent = `${errors} errors · backing off to rebuild`; }
+    else {
+      v.textContent = `Hold at N=${state.n}`;
+      if(!settings.adaptive) vs.textContent = `fixed level · adaptive off`;
+      else if(state.n>=CEIL && errors<3) vs.textContent = `at the ceiling · N=${CEIL}`;
+      else vs.textContent = `${errors} errors · staying put`;
+    }
+    $("sHits").innerHTML = `${b.hits}<small>/${b.targets}</small>`;
+    $("sMiss").textContent = b.misses;
+    $("sFa").textContent = b.fa;
+    $("sErr").textContent = errors;
+    if(b.lures>0){
+      $("sLureCell").style.display = "";
+      $("sLure").innerHTML = `${b.lures-b.lureFa}<small>/${b.lures}</small>`;
+    } else {
+      $("sLureCell").style.display = "none";
+    }
+    if(sessionInfinite()){ $("rBarWrap").style.display="none"; }
+    else { $("rBarWrap").style.display=""; $("rBar").style.width = Math.min(100, Math.round(100*elapsedMs()/sessionMs()))+"%"; }
+    $("contBtn").textContent = done ? "See summary" : "Continue";
+    show("results");
+  }
 
-  // [ratio, gain, decayScale, pan] — warm, with one soft inharmonic shimmer (safe at this low pitch)
-  var partials = [
-    [1.000, 1.00, 1.00, -0.30],   // fundamental, slightly left
-    [1.003, 0.70, 1.00,  0.30],   // detuned twin, slightly right -> wide living shimmer
-    [2.000, 0.26, 0.78,  0.00],   // soft octave, centred
-    [2.760, 0.07, 0.45,  0.18]    // characteristic bowl partial (~950 Hz here), brief, gentle
+  function continueSession(){
+    if(timeUp()){ finishSession(); return; }
+    beginBlockWithCountdown();
+  }
+
+  function fmtDur(ms){ const s=Math.max(0,Math.round(ms/1000)); const m=Math.floor(s/60); return `${m}:${String(s%60).padStart(2,"0")}`; }
+  function renderSummaryGrid(items){
+    $("zGrid").innerHTML = items.map(it=>`<div class="stat"><div class="k">${it.k}</div><div class="v">${it.v}</div></div>`).join("");
+  }
+
+  function finishSession(){
+    clearTimeout(state.timer);
+    clearTimeout(state.cueTimer);
+    state.accepting = false;
+    if(synth){ try{ synth.cancel(); }catch(e){} }
+    const dur = state.session ? Date.now() - state.session.start : 0;
+
+    if(settings.passive){
+      renderSummaryGrid([
+        {k:"Time", v:fmtClock(dur)},
+        {k:"Trials", v:String(state.session ? state.session.trials : 0)},
+        {k:"Level", v:"N"+settings.startN}
+      ]);
+      $("zChipsCard").style.display = "none";
+      sSet(SETKEY, JSON.stringify(serialize()));
+      show("summary");
+      return;
+    }
+
+    const blocks = state.session ? state.session.blocks : [];
+    if(blocks.length===0){ show("setup"); return; }
+    const ns = blocks.map(x=>x.n);
+    const avg = ns.reduce((a,c)=>a+c,0)/ns.length;
+    const peak = Math.max(...ns);
+    const hitsSum = blocks.reduce((a,c)=>a+c.hits,0);
+    const targSum = blocks.reduce((a,c)=>a+c.targets,0);
+    const hitRate = targSum? Math.round(100*hitsSum/targSum) : 0;
+
+    renderSummaryGrid([
+      {k:"Time", v:fmtClock(dur)},
+      {k:"Blocks", v:String(blocks.length)},
+      {k:"Peak N", v:String(peak)},
+      {k:"Hit rate", v:`${hitRate}<small>%</small>`}
+    ]);
+    $("zChipsCard").style.display = "";
+    $("zChips").innerHTML = blocks.map((x,i)=>`<div class="chip">B${i+1} <b>N${x.n}</b> ${x.hits}/${x.targets}${x.fa?` ·${x.fa}fa`:""}</div>`).join("");
+
+    const rec = { date: Date.now(), blocks: blocks.length, avgN: +avg.toFixed(1), peakN: peak, hitRate, endN: state.n };
+    persistSession(rec);
+    show("summary");
+  }
+
+  async function persistSession(rec){
+    settings.startN = state.n; // resume next time at where adaptive landed
+    await sSet(SETKEY, JSON.stringify(serialize()));
+    let hist = [];
+    const raw = await sGet(HISTKEY);
+    if(raw){ try{ hist = JSON.parse(raw)||[]; }catch(e){ hist=[]; } }
+    hist.unshift(rec);
+    hist = hist.slice(0,12);
+    await sSet(HISTKEY, JSON.stringify(hist));
+    renderHistory(hist);
+    $("nVal").textContent = settings.startN; // reflect resumed level in setup
+  }
+
+  /* ---------------- readouts ---------------- */
+  function paintTime(){
+    const inf = sessionInfinite();
+    $("pTime").textContent = inf ? fmtClock(elapsedMs()) : fmtClock(Math.max(0, sessionMs() - elapsedMs()));
+  }
+  function paintReadouts(pre){
+    $("pN").textContent = state.n;
+    paintTime();
+    if(settings.passive){
+      $("pBlockPill").style.display = "none";
+      const t = (state.block && !pre) ? state.block.index+1 : 0;
+      $("pTrial").textContent = `${t}`;
+      return;
+    }
+    $("pBlockPill").style.display = "";
+    const L = settings.base + state.n;
+    $("pBlock").textContent = `${state.blockIndex+1}`;
+    const tIndex = (state.block && !pre) ? Math.min(state.block.index+1, L) : 0;
+    $("pTrial").textContent = `${tIndex}/${L}`;
+  }
+
+  /* ---------------- history render ---------------- */
+  function fmtDate(ts){
+    const d = new Date(ts);
+    return d.toLocaleDateString(undefined,{month:"short",day:"numeric"}) + " · " +
+           d.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"});
+  }
+  function renderHistory(hist){
+    const card = $("histCard"), list = $("histList");
+    if(!hist || !hist.length){ card.style.display="none"; return; }
+    card.style.display="block";
+    list.innerHTML = hist.map(h=>`<div class="hrow"><span>${fmtDate(h.date)}</span><span><b>peak N${h.peakN}</b> · avg ${h.avgN} · ${h.hitRate}% · ${h.blocks} blk</span></div>`).join("");
+  }
+
+  /* ---------------- worked examples ---------------- */
+  /* Each trial: {num, stream, shape}. `note` (on the matching trial) describes how the
+     regenerated shape relates to the new one. Recalls are computed: at trial t>=n we
+     regenerate trial t-n and compare numbers -> match or hold. */
+  const EXAMPLES = [
+    {n:2,trials:[
+      {num:"7",stream:"a drop into still water",shape:"rings out from a point"},
+      {num:"3",stream:"smoke up a chimney",shape:"a rising column"},
+      {num:"7",stream:"marbles spilled across tile",shape:"spread from one release",note:"both push outward from a single source"},
+      {num:"5",stream:"a pendulum swinging",shape:"a steady to-and-fro"}
+    ]},
+    {n:2,trials:[
+      {num:"4",stream:"a whirlpool taking leaves",shape:"an inward spiral to a point"},
+      {num:"8",stream:"a fork in a mountain road",shape:"one path into two"},
+      {num:"4",stream:"a crowd through one door",shape:"many narrowing to one",note:"both converge inward, scattered to single"},
+      {num:"2",stream:"a flag rippling on wind",shape:"a travelling wave"}
+    ]},
+    {n:2,trials:[
+      {num:"9",stream:"a sneeze building then out",shape:"a load, then sudden release"},
+      {num:"1",stream:"nesting dolls opening",shape:"things inside things"},
+      {num:"9",stream:"a wave curling and breaking",shape:"tension rising to a snap",note:"the same arc, build then burst"},
+      {num:"6",stream:"a tide drawing back",shape:"a withdrawal that reveals"}
+    ]},
+    {n:2,trials:[
+      {num:"5",stream:"iron filings near a magnet",shape:"scatter pulled into order"},
+      {num:"2",stream:"a vine winding a pole",shape:"a climbing spiral"},
+      {num:"5",stream:"a marching band forming up",shape:"loose parts aligning",note:"both resolve disorder into a pattern"},
+      {num:"8",stream:"a coin spinning to rest",shape:"motion decaying to still"}
+    ]},
+    {n:2,trials:[
+      {num:"6",stream:"a lake mirroring the hills",shape:"symmetry across a line"},
+      {num:"4",stream:"a snowball growing downhill",shape:"a small start, accelerating"},
+      {num:"6",stream:"two mirror-image dancers",shape:"one side reversed in the other",note:"the same mirror, each side echoed"},
+      {num:"1",stream:"an hourglass draining",shape:"a steady one-way transfer"}
+    ]},
+
+    {n:3,trials:[
+      {num:"5",stream:"a river fanning to a delta",shape:"one into many, branching"},
+      {num:"1",stream:"a clock pendulum",shape:"an even oscillation"},
+      {num:"8",stream:"a flower opening at dawn",shape:"closed unfolding open"},
+      {num:"5",stream:"a rumour through a town",shape:"one source to many mouths",note:"the same branching, one to many"},
+      {num:"3",stream:"a knot pulled tight",shape:"loose drawn to a point"}
+    ]},
+    {n:3,trials:[
+      {num:"3",stream:"a story within a story",shape:"a frame inside a frame"},
+      {num:"7",stream:"a spark down a fuse",shape:"activation running along"},
+      {num:"2",stream:"a folded map opening",shape:"compact spreading flat"},
+      {num:"3",stream:"Russian dolls nested",shape:"layers within layers",note:"the same nesting, things held within things"},
+      {num:"9",stream:"applause swelling in a hall",shape:"a tiny trigger to a flood"}
+    ]},
+    {n:3,trials:[
+      {num:"8",stream:"a candle flame steadying",shape:"a flutter settling to calm"},
+      {num:"4",stream:"ripples crossing on a pond",shape:"two waves overlapping"},
+      {num:"6",stream:"a staircase winding up",shape:"spin and rise together"},
+      {num:"8",stream:"an argument cooling off",shape:"agitation winding to still",note:"the same settling, motion to calm"},
+      {num:"2",stream:"a seed splitting a shoot",shape:"one dividing in two"}
+    ]},
+    {n:3,trials:[
+      {num:"1",stream:"fog lifting off a valley",shape:"a veil retreating to reveal"},
+      {num:"6",stream:"a kite climbing a gust",shape:"a line pulled upward"},
+      {num:"5",stream:"a whirlpool drawing in",shape:"an inward spiral"},
+      {num:"1",stream:"a tide going out",shape:"a withdrawal that uncovers",note:"both uncover by withdrawing"},
+      {num:"7",stream:"marbles scattering loose",shape:"spread from one release"}
+    ]},
+    {n:3,trials:[
+      {num:"2",stream:"breathing in and out",shape:"a two-phase cycle"},
+      {num:"9",stream:"a snowball gathering size",shape:"small to huge, compounding"},
+      {num:"4",stream:"a lens pulling focus",shape:"blur resolving to a point"},
+      {num:"2",stream:"traffic lights cycling",shape:"a regular switch of states",note:"the same pulse, a repeating cycle"},
+      {num:"5",stream:"a magnet ordering filings",shape:"scatter into lines"}
+    ]},
+
+    {n:4,trials:[
+      {num:"7",stream:"a delta of channels",shape:"one fanning into many"},
+      {num:"2",stream:"a pendulum beat",shape:"a steady oscillation"},
+      {num:"5",stream:"a flower unfolding",shape:"closed opening out"},
+      {num:"9",stream:"an hourglass draining",shape:"a one-way transfer"},
+      {num:"7",stream:"news spreading fast",shape:"a single source to many",note:"the same branching tree, one to many"},
+      {num:"3",stream:"dolls nested inside",shape:"layers within layers"}
+    ]},
+    {n:4,trials:[
+      {num:"3",stream:"a frame within a frame",shape:"nesting inward"},
+      {num:"8",stream:"a coin settling flat",shape:"motion to rest"},
+      {num:"1",stream:"fog burning off",shape:"a veil withdrawing"},
+      {num:"6",stream:"a vine spiralling up",shape:"turning while rising"},
+      {num:"3",stream:"an echo inside an echo",shape:"things held within things",note:"the same nesting, layers in layers"},
+      {num:"9",stream:"a fuse racing along",shape:"a travelling front"}
+    ]},
+    {n:4,trials:[
+      {num:"9",stream:"a snowball growing",shape:"a small start, accelerating"},
+      {num:"4",stream:"a lake mirror",shape:"symmetry across a line"},
+      {num:"7",stream:"a stadium wave",shape:"a front sweeping across"},
+      {num:"2",stream:"an in-breath, an out-breath",shape:"a two-phase cycle"},
+      {num:"9",stream:"claps becoming a roar",shape:"a trigger swelling to flood",note:"the same compounding curve, little to huge"},
+      {num:"5",stream:"filings snapping to lines",shape:"scatter into order"}
+    ]},
+    {n:4,trials:[
+      {num:"1",stream:"mirror-image dancers",shape:"one side reversed"},
+      {num:"5",stream:"a whirlpool pulling in",shape:"an inward spiral"},
+      {num:"8",stream:"a sneeze, build then burst",shape:"a load then release"},
+      {num:"3",stream:"a map opening flat",shape:"compact to spread"},
+      {num:"1",stream:"reflection on still water",shape:"symmetry across a line",note:"the same mirror, each side echoed"},
+      {num:"6",stream:"a tide drawing back",shape:"a withdrawal revealing"}
+    ]},
+    {n:4,trials:[
+      {num:"6",stream:"a knot drawing tight",shape:"loose to a single point"},
+      {num:"2",stream:"traffic lights cycling",shape:"regular switching"},
+      {num:"9",stream:"an avalanche starting",shape:"small to overwhelming"},
+      {num:"4",stream:"two ripples crossing",shape:"waves overlapping"},
+      {num:"6",stream:"a lens finding focus",shape:"diffuse to a point",note:"the same tightening, spread to focused"},
+      {num:"8",stream:"a top slowing down",shape:"motion decaying to rest"}
+    ]},
+
+    {n:5,trials:[
+      {num:"4",stream:"a spark down a fuse",shape:"a front travelling end to end"},
+      {num:"9",stream:"a flower opening",shape:"closed unfolding out"},
+      {num:"1",stream:"a frame in a frame",shape:"nesting inward"},
+      {num:"7",stream:"a pendulum swing",shape:"a steady oscillation"},
+      {num:"2",stream:"a knot pulled tight",shape:"loose to a point"},
+      {num:"4",stream:"a stadium wave rising",shape:"a front sweeping across",note:"the same travelling front, a wave moving along"},
+      {num:"6",stream:"a snowball growing",shape:"small to huge"}
+    ]},
+    {n:5,trials:[
+      {num:"8",stream:"a flower at dawn",shape:"closed opening outward"},
+      {num:"3",stream:"an hourglass draining",shape:"a one-way transfer"},
+      {num:"6",stream:"ripples crossing",shape:"two waves overlapping"},
+      {num:"1",stream:"a coin settling",shape:"motion to rest"},
+      {num:"5",stream:"a whirlpool inward",shape:"a spiral to a point"},
+      {num:"8",stream:"a map opened flat",shape:"compact spreading open",note:"the same unfolding, closed to open"},
+      {num:"2",stream:"a fuse racing",shape:"a travelling front"}
+    ]},
+    {n:5,trials:[
+      {num:"2",stream:"an hourglass, grain by grain",shape:"steady transfer side to side"},
+      {num:"7",stream:"a delta fanning out",shape:"one into many"},
+      {num:"4",stream:"a lake mirror",shape:"symmetry across a line"},
+      {num:"9",stream:"applause swelling",shape:"a trigger to a flood"},
+      {num:"3",stream:"dolls nested",shape:"layers within"},
+      {num:"2",stream:"a bucket brigade",shape:"contents passed down a line",note:"the same transfer, one side empties as the other fills"},
+      {num:"5",stream:"a whirlpool drawing in",shape:"an inward spiral"}
+    ]},
+    {n:5,trials:[
+      {num:"5",stream:"two stones, ripples crossing",shape:"patterns overlapping, interfering"},
+      {num:"1",stream:"a vine up a pole",shape:"spin and rise"},
+      {num:"8",stream:"a sneeze, then release",shape:"a load to a snap"},
+      {num:"4",stream:"a lens focusing",shape:"blur to a point"},
+      {num:"6",stream:"a knot tightening",shape:"loose to a dense point"},
+      {num:"5",stream:"two talks overheard at once",shape:"two streams crossing, blending",note:"the same interference, two waves laid over each other"},
+      {num:"9",stream:"a snowball gathering",shape:"small to huge"}
+    ]},
+    {n:5,trials:[
+      {num:"9",stream:"a vine spiralling a pole",shape:"a climb that turns while rising"},
+      {num:"6",stream:"a knot drawn tight",shape:"loose to a point"},
+      {num:"2",stream:"breathing, in and out",shape:"a two-phase cycle"},
+      {num:"7",stream:"a fuse burning along",shape:"a travelling front"},
+      {num:"3",stream:"a story in a story",shape:"frames within frames"},
+      {num:"9",stream:"a staircase winding up",shape:"a corkscrew upward",note:"the same helix, spin and rise as one"},
+      {num:"4",stream:"a delta branching",shape:"one into many"}
+    ]}
   ];
-  partials.forEach(function(p){
-    var d = decay * p[2];
-    var o = ac.createOscillator(), g = ac.createGain();
-    o.type = 'sine';
-    o.frequency.value = fund * p[0];
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(peak * p[1], t + 0.045);  // slow swelling attack
-    g.gain.exponentialRampToValueAtTime(0.0001, t + d);
-    o.connect(g);
-    var tail = g;
-    if(p[3] && ac.createStereoPanner){
-      var pan = ac.createStereoPanner(); pan.pan.value = p[3];
-      g.connect(pan); tail = pan;
-    }
-    tail.connect(lp);
-    o.start(t); o.stop(t + d + 0.1);
-  });
-  // release this strike's filter after it has decayed (prevents node buildup over long sessions)
-  setTimeout(function(){ try { lp.disconnect(); } catch(e){} }, (decay + 0.4) * 1000);
-}
-// Breath cue: a soft strike that rings, then dissolves into the long reverb.
-// Inhale a perfect-fourth above the exhale — the same bowl, struck for in vs out.
-function breathBell(phase){ bowl(phase === 'inhale' ? 392.00 : 293.66, 0.08, 3.3); }
-// Completion: a fuller, long temple bell, then a lower strike — spacious and serene.
-function completeBell(){ bowl(392.00, 0.13, 8.5); setTimeout(function(){ bowl(293.66, 0.11, 9.5); }, 3000); }
 
-// ── Ambient pad ── a low, soft sustained drone that runs beneath the Stage One
-// session: the calm background layer the bell rings over. Built on its OWN
-// independent graph straight to the speakers — it shares nothing with the bell
-// synthesis, so it cannot change the bell sound (audio simply sums at output).
-// Tuned to D: an octave below the exhale tone and a fourth below the inhale
-// tone, so it sits consonantly under both strikes. Heavily low-passed -> warm
-// and dark, nothing bright. Swells in slowly, undulates gently, fades on stop.
-var _drone = null;
-function droneStart(){
-  if(_drone) return;                       // already running
-  var ac = _audio(); if(!ac) return;
-  if(ac.state === 'suspended'){ try{ ac.resume(); }catch(e){} }
-  var t = ac.currentTime;
-
-  var mix = ac.createGain(); mix.gain.value = 1;
-  var lp  = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 760; lp.Q.value = 0.4;
-  var env = ac.createGain();
-  env.gain.setValueAtTime(0.0001, t);
-  env.gain.exponentialRampToValueAtTime(0.55, t + 4.5);   // slow swell to a low, steady sustain
-  mix.connect(lp); lp.connect(env); env.connect(ac.destination);
-
-  // [freq, gain] — an open fifth on D, with a slightly detuned twin for a slow,
-  // living beat (~0.6 Hz). All pure sines below ~220 Hz: deep and unobtrusive.
-  var voices = [
-    [ 73.42, 0.060],   // D2  sub
-    [146.83, 0.075],   // D3  body
-    [147.42, 0.055],   // D3' detuned twin
-    [220.00, 0.045]    // A3  fifth, soft
-  ];
-  var oscs = [];
-  voices.forEach(function(v){
-    var o = ac.createOscillator(), g = ac.createGain();
-    o.type = 'sine'; o.frequency.value = v[0]; g.gain.value = v[1];
-    o.connect(g); g.connect(mix); o.start(t); oscs.push(o);
-  });
-
-  // very slow amplitude undulation -> a gentle breathing motion under the bell
-  var lfo = ac.createOscillator(); lfo.type = 'sine'; lfo.frequency.value = 0.09;
-  var lfoGain = ac.createGain(); lfoGain.gain.value = 0.06;
-  lfo.connect(lfoGain); lfoGain.connect(env.gain); lfo.start(t);
-
-  _drone = { oscs: oscs, lfo: lfo, env: env, lp: lp, mix: mix, lfoGain: lfoGain };
-}
-function droneStop(){
-  var d = _drone; if(!d) return;
-  _drone = null;                           // allow a fresh start immediately
-  var ac = _audio(); if(!ac) return;
-  var t = ac.currentTime, fade = 3.0;
-  try {
-    d.env.gain.cancelScheduledValues(t);
-    d.env.gain.setValueAtTime(Math.max(d.env.gain.value, 0.0001), t);
-    d.env.gain.exponentialRampToValueAtTime(0.0001, t + fade);   // slow fade-out
-  } catch(e){}
-  setTimeout(function(){
-    try { d.oscs.forEach(function(o){ o.stop(); }); } catch(e){}
-    try { d.lfo.stop(); } catch(e){}
-    [d.lp, d.mix, d.env, d.lfoGain].forEach(function(n){ try{ n.disconnect(); }catch(e){} });
-  }, (fade + 0.3) * 1000);
-}
-
-function startWithDuration(secs){
-  s1.total = secs; s1.rem = secs; s1.phase = 'inhale';
-  var st=$('s1-start'), lv=$('s1-live');
-  if(st) st.classList.add('is-hidden');
-  if(lv) lv.classList.remove('is-hidden');
-  try{ window.scrollTo({top:0,behavior:'smooth'}); }catch(e){ window.scrollTo(0,0); }
-  var ttl = $('session-title-label'); if(ttl) ttl.textContent = 'Heart Coherence · Active';
-  ['ci-breath','ci-heart','ci-feeling'].forEach(function(id){ var e=$(id); if(e) e.classList.remove('active'); });
-  s1Timer(); s1Progress();
-  startBreath('inhale');
-  droneStart();                 // soft ambient pad underneath the bell
-  setTimeout(function(){ s1Activate('ci-breath'); }, 400);
-  setTimeout(function(){ s1Activate('ci-heart'); }, 4000);
-  setTimeout(function(){ s1Activate('ci-feeling'); }, 9000);
-  clearInterval(s1.tick);
-  s1.tick = setInterval(function(){
-    s1.rem--;
-    s1Timer(); s1Progress();
-    if(s1.rem <= 0){ s1Stop(); completeS1(); }
-  }, 1000);
-}
-
-function startBreath(phase){
-  s1.phase = phase;
-  breathBell(phase);
-  var ball = $('breath-ball'), label = $('breath-label'), cd = $('breath-cd');
-  var info = PHASES[s1PhaseKey()][phase];
-  var sl = $('phase-step-label'); if(sl) sl.textContent = info.label;
-  var pt = $('phase-text');      if(pt) pt.textContent = info.text;
-  if(label) label.textContent = (phase === 'inhale') ? 'Inhale' : 'Exhale';
-  if(ball) ball.classList.toggle('inhale-state', phase === 'inhale');
-
-  var c = 5; if(cd) cd.textContent = '5';
-  clearInterval(s1.bSec);
-  s1.bSec = setInterval(function(){
-    c--; if(cd) cd.textContent = c > 0 ? c : '';
-    if(c <= 0) clearInterval(s1.bSec);
-  }, 1000);
-
-  clearTimeout(s1.bTo);
-  s1.bTo = setTimeout(function(){
-    if(s1.rem > 0) startBreath(phase === 'inhale' ? 'exhale' : 'inhale');
-  }, 5000);
-}
-
-function s1Stop(){ clearInterval(s1.tick); clearTimeout(s1.bTo); clearInterval(s1.bSec); droneStop(); }
-function completeS1(){ completeBell(); var c=$('completion'); if(c) c.classList.add('show'); }
-function endSession(){ s1Stop(); s1ShowStart(); }
-function restartToIntro(){
-  s1Stop();
-  ['ci-breath','ci-heart','ci-feeling'].forEach(function(id){ var e=$(id); if(e) e.classList.remove('active'); });
-  var c=$('completion'); if(c) c.classList.remove('show');
-  s1ShowStart();
-  showScreen('screen-intro');
-}
-
-/* ============================ STAGE TWO ============================ */
-function setS2Depth(depth){
-  document.querySelectorAll('.depth-tab[data-s2-depth]').forEach(function(t){
-    t.classList.toggle('active', t.dataset.s2Depth === depth);
-  });
-  document.querySelectorAll('.s2-depth-block[data-s2-depth]').forEach(function(b){
-    b.classList.toggle('active', b.dataset.s2Depth === depth);
-  });
-}
-
-const S2_DIMENSIONS = [
-  { label:'LOCATION',     prompt:'Okay, now. Where in the body is the feeling sitting? Name the area in the plainest words &mdash; chest, throat, belly, jaw, hands, shoulders. This is where an emotion lives as something physical: grief tends to gather in the chest and throat, anxiety high in the chest, anger in the jaw and hands. Does it have a clear edge, or fade into what surrounds it? Don&rsquo;t explain it yet &mdash; just say where it is.' },
-  { label:'QUALITY',      prompt:'Okay, now. What does it feel like, as raw sensation? Plain physical words &mdash; pressure, heat, cold, tightness, hollowness, heaviness, lightness. This texture is the emotion&rsquo;s signature: a downward heaviness reads as sadness, a warm spreading openness as joy, a tight electric buzzing as fear. Pick the word that truly fits, not the one that sounds deep &mdash; the feeling lives in the texture.' },
-  { label:'INTENSITY',    prompt:'Okay, now. How strong is the sensation itself, 0 to 10? Rate the sensation, not the story riding on it. Notice the two can differ: a loud emotion can sit on a faint sensation, and a strong physical sensation can carry almost no feeling. Learning that gap &mdash; how big the emotion is versus how big the sensation is &mdash; is part of reading yourself accurately.' },
-  { label:'MOVEMENT',     prompt:'Okay, now. Is it still, or moving &mdash; pulsing, spreading, rising, sinking, flickering, throbbing? Steady, or coming in waves? The movement carries the emotion: a rising, quickening lift leans toward excitement or joy; a sinking, collapsing pull toward sadness; a fast flutter toward fear. Describe the movement itself for now, not yet what it means.' },
-  { label:'DIRECTION',    prompt:'Okay, now. Which way is it going &mdash; toward you, away, up, down, inward, outward, radiating from a centre? Direction maps to feeling: opening outward tends toward warmth and joy; pulling inward and down toward grief or shame; pushing out against something toward anger. If there is no clear direction, say so &mdash; it is simply staying put.' },
-  { label:'COHERENCE',    prompt:'Okay, now. Is this one clean feeling, or several at once? Check four layers and see if they agree: the raw sensation, the image it brings to mind, what the body wants to do, and the emotional tone it carries. Mixed feelings show up here as layers pulling apart &mdash; relief threaded with grief, anger sitting over fear. Are they pointing the same way, or against each other?' },
-  { label:'MEANING-TONE', prompt:'Okay, now. First the tone &mdash; pleasant, unpleasant, or neutral; drawing you in, pushing away, or holding still? Then name it: from where it sits, its texture, its movement, what emotion is this in one word? Sadness, joy, fear, anger, longing, calm. The name now rests on what you actually felt, not a guess &mdash; and each time you trace a feeling down to its body like this, the link between <em>this</em> sensation and <em>this</em> emotion grows stronger, and faster to read next time.' }
-];
-
-const S2_PHASES = [
-  { k:'arrive', from:0.00, to:0.12, label:'Phase · Arrive',
-    prompts:[
-      'Okay now. Let the breath stay slow, about five to six breaths per minute. Feel the ground under your feet and seat. Let one sensation in your body come forward on its own. You are not searching for it; you are receiving it. Whatever shows up first is what you will work with.',
-      'Okay now. Commit to that sensation. Put your attention <em>inside</em> the part of the body holding it, rather than watching it from outside. If a light hand on your chest, side ribs, or lower belly helps, use it for a moment.'
-    ] },
-  { k:'mapping', from:0.12, to:0.68 },
-  { k:'calibrate', from:0.68, to:0.88, label:'Phase · Calibrate',
-    prompts:[
-      '<strong>Okay, now. Accuracy check.</strong> How closely does what you described match what is actually happening in the body? If you honestly can&rsquo;t tell, say so. A truthful &ldquo;I don&rsquo;t know&rdquo; is more accurate than a confident guess.',
-      '<strong>Okay, now. Attention check.</strong> How inside the body were you, versus watching from outside and narrating? Being inside isn\u2019t a performance; it\u2019s just where your attention actually was.',
-      '<strong>Okay, now. Confidence check.</strong> On a 0&ndash;10 scale, how sure are you about what you just described? Now notice: strong feelings often carry weak precision. The gap between your confidence and how right you likely are is exactly what we are training.'
-    ] },
-  { k:'translate', from:0.88, to:1.01, label:'Phase · Translate',
-    prompts:[
-      '<strong>Okay, now. What it grabs.</strong> What is this sensation doing to your attention right now? Is it making certain worries louder, or muting other things that usually matter to you?',
-      '<strong>Okay, now. What it suggests.</strong> What interpretation is the sensation pushing you toward? Threat, promise, obligation, shame, curiosity? Name the interpretation.',
-      '<strong>Okay, now. What the body wants to do.</strong> What is the body getting ready for? Move toward something, pull away, brace, soften, reach out, hide? This is the moment a sensation turns into meaning. Watch it form. Don&rsquo;t automatically go along with it. You are the reader, not the reading.'
-    ] }
-];
-
-var S2_STEP_SECS = 30;   // seconds each step holds before the bell shifts to the next
-var s2 = { total:0, rem:0, tick:null, lastDim:-1, stepRem:0, peek:null };
-
-function startStage2WithDuration(secs){
-  s2.total = secs; s2.rem = secs; s2.lastDim = -1; s2.stepRem = S2_STEP_SECS; s2.peek = null;
-  document.querySelectorAll('#s2s-chain .s2s-chip').forEach(function(c){ c.classList.remove('active','done','peek'); });
-  var st=$('s2-start'), lv=$('s2-live');
-  if(st) st.classList.add('is-hidden');
-  if(lv) lv.classList.remove('is-hidden');
-  try{ window.scrollTo({top:0,behavior:'smooth'}); }catch(e){ window.scrollTo(0,0); }
-  droneStart();                 // soft ambient pad beneath the mapping session
-  s2RenderMeta();
-  s2ShowStep(0, true);          // first step, with the bell
-  s2.stepRem = S2_STEP_SECS;
-  s2UpdateCountdown();
-  if(s2.tick) clearInterval(s2.tick);
-  s2.tick = setInterval(function(){
-    s2.rem--;
-    s2RenderMeta();
-    if(s2.rem <= 0){ clearInterval(s2.tick); s2.tick = null; showStage2Completion(); return; }
-    if(s2.peek !== null) return;                 // re-reading a step: hold the rotation + countdown
-    s2.stepRem--;
-    if(s2.stepRem <= 0){                          // interval elapsed: shift to the next step + bell
-      s2ShowStep((s2.lastDim + 1) % S2_DIMENSIONS.length, true);
-      s2.stepRem = S2_STEP_SECS;
-    }
-    s2UpdateCountdown();
-  }, 1000);
-}
-
-// timer + progress only
-function s2RenderMeta(){
-  var t = $('s2s-timer'); if(t) t.textContent = pad(Math.floor(s2.rem/60)) + ':' + pad(s2.rem%60);
-  var pct = Math.min(1, 1 - (s2.rem / s2.total));
-  var bar = $('s2s-progress-fill'); if(bar) bar.style.width = (pct*100).toFixed(2) + '%';
-}
-
-// per-step countdown to the next bell (separate from the session timer)
-function s2UpdateCountdown(){
-  var e = $('s2s-countdown'); if(e) e.textContent = '0:' + pad(Math.max(0, s2.stepRem));
-}
-
-// show one step; ring the exact Stage One bell on each shift
-function s2ShowStep(step, ring){
-  if(ring) breathBell(step % 2 === 0 ? 'inhale' : 'exhale');   // G4 / D4 — the same bell as Stage One
-  var dim = S2_DIMENSIONS[step];
-  setStage2Display(dim.label, 'Step ' + (step+1) + ' / ' + S2_DIMENSIONS.length, dim.prompt);
-  updateStage2Chain(step);
-  s2.lastDim = step;
-}
-
-function setStage2Display(center, label, prompt){
-  var c = $('s2s-center'), l = $('s2s-phase-label'), p = $('s2s-prompt');
-  if(c && c.textContent !== center){
-    c.classList.add('fading');
-    setTimeout(function(){ c.textContent = center; c.classList.remove('fading'); }, 300);
+  function renderExamples(){
+    const labels = {2:"Two-back",3:"Three-back",4:"Four-back",5:"Five-back"};
+    let html = "", curN = null, idx = 0;
+    EXAMPLES.forEach(e=>{
+      if(e.n!==curN){ curN=e.n; idx=0; html += `<div class="ex-group">${labels[e.n]} · recall distance ${e.n}</div>`; }
+      idx++;
+      const chips = e.trials.map((tr,i)=>`<div class="dchip${(i===0||i===e.n)?' on':''}">${tr.num}</div>`).join("");
+      let rows = "";
+      e.trials.forEach((tr,t)=>{
+        let recall = "";
+        if(t>=e.n){
+          const ref = e.trials[t-e.n];
+          if(tr.num===ref.num){
+            recall = `<div class="tr-recall match"><span class="mark">↺</span>${e.n} back: regenerate <span class="tok-p">${ref.shape}</span> (that was <span class="tok-n">${ref.num}</span>) <span class="mark">⇄</span> set beside this trial's <span class="tok-p">${tr.shape}</span> → <span class="v">SAME ▸ MATCH, press</span>${tr.note?` · ${tr.note}`:""}</div>`;
+          } else {
+            recall = `<div class="tr-recall nomatch"><span class="mark">↺</span>${e.n} back: regenerate <span class="tok-p">${ref.shape}</span> (that was <span class="tok-n">${ref.num}</span>) <span class="mark">⇄</span> current is <span class="tok-n">${tr.num}</span> → <span class="v">DIFFERENT ▸ hold</span></div>`;
+          }
+        }
+        rows += `<div class="tr"><div class="tr-t">t${t}</div><div class="tr-main"><span class="tok-n">${tr.num}</span> · <span class="tok-s">${tr.stream}</span> · <span class="tok-p">${tr.shape}</span> <span class="bind">→ pair ${tr.num}</span>${recall}</div></div>`;
+      });
+      html += `<div class="ex"><div class="ex-head"><span class="ex-tag">${e.n}-BACK · ${String(idx).padStart(2,'0')}</span><span class="ex-gap">every number paired · recall ${e.n} back</span></div><div class="ex-seq">${chips}</div>${rows}</div>`;
+    });
+    $("exList").innerHTML = html;
   }
-  if(l) l.textContent = label;
-  if(p && p.getAttribute('data-text') !== prompt){
-    p.classList.add('fading');
-    setTimeout(function(){ p.innerHTML = prompt; p.setAttribute('data-text', prompt); p.classList.remove('fading'); }, 320);
-  }
-}
-function updateStage2Chain(active){
-  document.querySelectorAll('#s2s-chain .s2s-chip').forEach(function(c){
-    var i = parseInt(c.dataset.dim, 10);
-    c.classList.remove('active','done');
-    if(i < active) c.classList.add('done'); else if(i === active) c.classList.add('active');
-  });
-}
-function moveStage2Marker(){ /* mandala marker removed with artwork — no-op */ }
 
-function peekStage2Dimension(idx){
-  if(typeof idx !== 'number' || idx < 0 || idx >= S2_DIMENSIONS.length) return;
-  if(s2.peek === idx){ exitStage2Peek(); return; }
-  s2.peek = idx;
-  var dim = S2_DIMENSIONS[idx];
-  document.querySelectorAll('#s2s-chain .s2s-chip').forEach(function(c){
-    c.classList.toggle('peek', parseInt(c.dataset.dim,10) === idx);
+  /* ---------------- settings I/O ---------------- */
+  function serialize(){
+    return { startN:settings.startN, adaptive:settings.adaptive, paceMs:settings.paceMs,
+      base:settings.base, targets:settings.targets, setSize:settings.setSize,
+      sessionMin:settings.sessionMin, rate:settings.rate, voiceURI:settings.voiceURI, guided:settings.guided, lurePct:settings.lurePct, passive:settings.passive };
+  }
+  function applyToUI(){
+    $("nVal").textContent = settings.startN;
+    $("adaptTog").classList.toggle("on", settings.adaptive);
+    $("adaptTog").setAttribute("aria-checked", settings.adaptive);
+    $("cueTog").classList.toggle("on", settings.guided);
+    $("cueTog").setAttribute("aria-checked", settings.guided);
+    $("passTog").classList.toggle("on", settings.passive);
+    $("passTog").setAttribute("aria-checked", settings.passive);
+    $("adaptRow").classList.toggle("disabled", settings.passive);
+    $("paceSel").value = String(settings.paceMs);
+    $("sessionRange").value = String(Math.min(190, settings.sessionMin));
+    $("baseSel").value = String(settings.base);
+    $("targSel").value = String(settings.targets);
+    $("setSel").value = String(settings.setSize);
+    $("rateRange").value = settings.rate;
+    $("rateHint").textContent = settings.rate.toFixed(1)+"×";
+    $("lureRange").value = settings.lurePct;
+    $("lureHint").textContent = `${settings.lurePct}% lures · n±1 near-misses`;
+    updateSessionHint();
+  }
+  function updateSessionHint(){
+    const score = settings.passive ? " · no scoring" : "";
+    $("sessionHint").textContent = fmtSessionLabel(settings.sessionMin) + score;
+  }
+
+  async function init(){
+    const raw = await sGet(SETKEY);
+    if(raw){ try{ Object.assign(settings, JSON.parse(raw)); }catch(e){} }
+    settings.startN = Math.min(CEIL, Math.max(1, settings.startN|0 || 2));
+    // migrate older saves: endless → infinite time; otherwise default/clamp to a valid step
+    if(settings.endless === true) settings.sessionMin = 190;
+    if(!(settings.sessionMin >= 10)) settings.sessionMin = 20;
+    settings.sessionMin = Math.min(190, Math.round(settings.sessionMin/10)*10);
+    delete settings.endless; delete settings.blocks;
+    state.n = settings.startN;
+    applyToUI();
+    if(synth) loadVoices();
+    const hraw = await sGet(HISTKEY);
+    if(hraw){ try{ renderHistory(JSON.parse(hraw)); }catch(e){} }
+  }
+
+  /* ---------------- event wiring ---------------- */
+  $("nStep").addEventListener("click", e=>{
+    const btn = e.target.closest("button"); if(!btn) return;
+    const d = +btn.dataset.d;
+    settings.startN = Math.min(CEIL, Math.max(1, settings.startN + d));
+    state.n = settings.startN;
+    $("nVal").textContent = settings.startN;
   });
-  setStage2Display(dim.label, 'Re-reading · ' + dim.label + ' · tap again to return', dim.prompt);
-}
-function exitStage2Peek(){
-  if(s2.peek === null) return;
-  s2.peek = null;
-  document.querySelectorAll('#s2s-chain .s2s-chip').forEach(function(c){ c.classList.remove('peek'); });
-  s2ShowStep(s2.lastDim >= 0 ? s2.lastDim : 0, false);   // back to the current step, no bell
-  s2UpdateCountdown();
-}
-function showStage2Completion(){
-  droneStop();
-  completeBell();   // the same closing bell as Stage One
-  var e=$('stage2-completion'); if(e) e.classList.add('show');
-}
-function endStage2Session(){ if(s2.tick){ clearInterval(s2.tick); s2.tick=null; } droneStop(); s2ShowStart(); }
-function restartStage2ToIntro(){
-  if(s2.tick){ clearInterval(s2.tick); s2.tick=null; }
-  droneStop();
-  var e=$('stage2-completion'); if(e) e.classList.remove('show');
-  s2ShowStart();
-  showScreen('screen-intro');
-}
+  $("adaptTog").addEventListener("click", function(){
+    settings.adaptive = !settings.adaptive;
+    this.classList.toggle("on", settings.adaptive);
+    this.setAttribute("aria-checked", settings.adaptive);
+  });
+  $("cueTog").addEventListener("click", function(){
+    settings.guided = !settings.guided;
+    this.classList.toggle("on", settings.guided);
+    this.setAttribute("aria-checked", settings.guided);
+  });
+  $("passTog").addEventListener("click", function(){
+    settings.passive = !settings.passive;
+    this.classList.toggle("on", settings.passive);
+    this.setAttribute("aria-checked", settings.passive);
+    $("adaptRow").classList.toggle("disabled", settings.passive);
+    updateSessionHint();
+  });
+  $("sessionRange").addEventListener("input", e=>{ settings.sessionMin = +e.target.value; updateSessionHint(); });
+  $("paceSel").addEventListener("change", e=>{ settings.paceMs = +e.target.value; });
+  $("baseSel").addEventListener("change", e=>{ settings.base = +e.target.value; });
+  $("targSel").addEventListener("change", e=>{ settings.targets = +e.target.value; });
+  $("setSel").addEventListener("change", e=>{ settings.setSize = +e.target.value; });
+  $("rateRange").addEventListener("input", e=>{ settings.rate = +e.target.value; $("rateHint").textContent = settings.rate.toFixed(1)+"×"; });
+  $("lureRange").addEventListener("input", e=>{ settings.lurePct = +e.target.value; $("lureHint").textContent = `${settings.lurePct}% lures · n±1 near-misses`; });
+  $("testBtn").addEventListener("click", ()=>{
+    if(!synth){ return; }
+    const P = pool();
+    let i = 0;
+    const demo = [P[(Math.random()*P.length)|0], P[(Math.random()*P.length)|0], P[(Math.random()*P.length)|0]];
+    const sayNext = ()=>{ if(i<demo.length){ speak(demo[i]); i++; setTimeout(sayNext, Math.min(1100, settings.paceMs)); } };
+    sayNext();
+  });
+
+  $("startBtn").addEventListener("click", ()=>{ sSet(SETKEY, JSON.stringify(serialize())); startSession(); });
+  $("matchBtn").addEventListener("click", handleResponse);
+  $("contBtn").addEventListener("click", continueSession);
+  $("stopBtn").addEventListener("click", finishSession);
+  $("endBtn").addEventListener("click", ()=>{ clearTimeout(state.timer); if(synth){try{synth.cancel();}catch(e){}} finishSession(); });
+  $("againBtn").addEventListener("click", startSession);
+  $("homeBtn").addEventListener("click", ()=>{ applyToUI(); show("setup"); });
+  $("resetBtn").addEventListener("click", async ()=>{
+    await sDel(HISTKEY);
+    $("histCard").style.display="none";
+  });
+
+  function openExamples(){ renderExamples(); show("examples"); }
+  $("examplesOpen").addEventListener("click", openExamples);
+  $("examplesOpen").addEventListener("keydown", e=>{ if(e.key==="Enter"||e.code==="Space"){ e.preventDefault(); openExamples(); } });
+  $("exBack").addEventListener("click", ()=>show("setup"));
+  $("exDone").addEventListener("click", ()=>show("setup"));
+
+  document.addEventListener("keydown", e=>{
+    if(e.repeat) return;
+    if(e.code==="Space" || e.key==="a" || e.key==="A"){
+      if(state.screen==="play"){ e.preventDefault(); handleResponse(); }
+    }
+  });
+
+  init();
+})();
 </script>
 </body>
 </html>
