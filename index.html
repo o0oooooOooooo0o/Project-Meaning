@@ -220,6 +220,12 @@ header{max-width:760px;margin:0 auto;padding:56px 26px 8px;text-align:center}
 .s2-teach-title{font-family:var(--display);font-size:clamp(18px,2.5vw,23px);letter-spacing:.04em;margin-top:10px}
 .stage-back{align-self:flex-start;background:none;border:none;cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);padding:6px 2px;margin-bottom:-6px;transition:color .2s}
 .stage-back:hover{color:var(--ink)}
+.rate-row{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:16px}
+.rate-label{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-right:2px}
+.rate-btn{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--muted);background:none;border:1px solid var(--line);border-radius:2px;padding:5px 11px;cursor:pointer;transition:border-color .2s,color .2s,background .2s}
+.rate-btn:hover{border-color:var(--ink);color:var(--ink)}
+.rate-btn.on{border-color:var(--ink);color:var(--ink);background:rgba(0,0,0,.05)}
+.rate-hint{font-family:var(--serif);font-size:14px;font-style:italic;color:var(--muted);text-align:center;margin-top:7px}
 .s2-teach p{font-size:clamp(16px,1.95vw,19px);line-height:1.72;color:#2c2c28}
 .s2-teach em{font-style:italic;color:var(--ink)}
 .s2-teach strong{font-weight:600}
@@ -472,6 +478,13 @@ header{max-width:760px;margin:0 auto;padding:56px 26px 8px;text-align:center}
           <button class="dur-btn start" onclick="startWithDuration(7200)">2 hr</button>
           <button class="dur-btn start" onclick="startWithDuration(10800)">3 hr</button>
         </div>
+        <div class="rate-row" role="group" aria-label="Alpha rate">
+          <span class="rate-label">Alpha rate</span>
+          <button class="rate-btn" data-hz="8" onclick="setAlphaRate(8,this)">8 Hz</button>
+          <button class="rate-btn on" data-hz="10" onclick="setAlphaRate(10,this)">10 Hz</button>
+          <button class="rate-btn" data-hz="12" onclick="setAlphaRate(12,this)">12 Hz</button>
+        </div>
+        <div class="rate-hint">10 Hz is the rate most linked to creativity; it eases in from just above.</div>
         <div class="s1-ex-note">
           If attention to the heart feels distressing, open your eyes, shorten the session, and
           let <em>ease</em> lead before love.
@@ -665,6 +678,13 @@ header{max-width:760px;margin:0 auto;padding:56px 26px 8px;text-align:center}
           <button class="dur-btn" onclick="startStage2WithDuration(1800)">30 min</button>
           <button class="dur-btn" onclick="startStage2WithDuration(3600)">60 min</button>
         </div>
+        <div class="rate-row" role="group" aria-label="Alpha rate">
+          <span class="rate-label">Alpha rate</span>
+          <button class="rate-btn" data-hz="8" onclick="setAlphaRate(8,this)">8 Hz</button>
+          <button class="rate-btn on" data-hz="10" onclick="setAlphaRate(10,this)">10 Hz</button>
+          <button class="rate-btn" data-hz="12" onclick="setAlphaRate(12,this)">12 Hz</button>
+        </div>
+        <div class="rate-hint">10 Hz is the rate most linked to creativity; it eases in from just above.</div>
         <div class="s2-ex-note">
           Start with 15 minutes for the basics &mdash; picking one sensation and walking it
           through the seven questions cleanly. Use 30 once you want the fine-noticing warm-up
@@ -1028,44 +1048,80 @@ function completeBell(){ bowl(392.00, 0.13, 8.5); setTimeout(function(){ bowl(29
 // session: the calm background layer the bell rings over. Built on its OWN
 // independent graph straight to the speakers — it shares nothing with the bell
 // synthesis, so it cannot change the bell sound (audio simply sums at output).
-// Tuned to D: an octave below the exhale tone and a fourth below the inhale
-// tone, so it sits consonantly under both strikes. Heavily low-passed -> warm
-// and dark, nothing bright. Swells in slowly, undulates gently, fades on stop.
+// Alpha pad, tuned to D so it sits consonantly under both bell strikes. A warm
+// open fifth + octave on D spread across the stereo field; A3 is a hard-panned
+// pair whose difference is a binaural beat (true binaural on headphones). Both
+// the binaural beat and an isochronic tremolo over the whole pad run at the
+// alpha rate, easing from 12 Hz down to 10 Hz over the first minute — 10 Hz is
+// the alpha frequency most linked to creativity (Lustenberger et al. 2015), and
+// 10-12 Hz is the upper-alpha ideation band. Reads on a phone speaker too.
+// Nothing below ~145 Hz, high-passed: clean, no sub buzz.
 var _drone = null;
+var ALPHA_RATE = 10;   // user-selectable alpha rate (Hz); 10 = most creativity-linked (Lustenberger 2015)
+
+// set the alpha rate from the selector; takes effect on the next session start
+function setAlphaRate(hz, btn){
+  hz = Math.max(8, Math.min(12, hz));
+  ALPHA_RATE = hz;
+  document.querySelectorAll('.rate-btn').forEach(function(b){
+    b.classList.toggle('on', parseFloat(b.dataset.hz) === hz);
+  });
+}
 function droneStart(){
   if(_drone) return;                       // already running
   var ac = _audio(); if(!ac) return;
   if(ac.state === 'suspended'){ try{ ac.resume(); }catch(e){} }
   var t = ac.currentTime;
+  var hasPan = (typeof ac.createStereoPanner === 'function');
+  var SETTLE = 60;                                  // seconds to ease the rate in
+  var aEnd = Math.max(8, Math.min(12, ALPHA_RATE)); // target alpha rate (Hz)
+  var aTop = Math.min(12.5, aEnd + 2);              // start just above, then settle to aEnd
 
-  var mix = ac.createGain(); mix.gain.value = 1;
-  var lp  = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 760; lp.Q.value = 0.4;
-  var env = ac.createGain();
+  var mix  = ac.createGain(); mix.gain.value = 1;                       // carrier sum
+  var trem = ac.createGain(); trem.gain.value = 0.5;                    // 10 Hz pulse stage
+  var hp   = ac.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=110; hp.Q.value=0.5;
+  var lp   = ac.createBiquadFilter(); lp.type='lowpass';  lp.frequency.value=1000; lp.Q.value=0.4;
+  var env  = ac.createGain();                                           // master swell + slow drift
   env.gain.setValueAtTime(0.0001, t);
-  env.gain.exponentialRampToValueAtTime(0.55, t + 4.5);   // slow swell to a low, steady sustain
-  mix.connect(lp); lp.connect(env); env.connect(ac.destination);
+  env.gain.exponentialRampToValueAtTime(0.5, t + 4.5);
 
-  // [freq, gain] — an open fifth on D, with a slightly detuned twin for a slow,
-  // living beat (~0.6 Hz). All pure sines below ~220 Hz: deep and unobtrusive.
-  var voices = [
-    [ 73.42, 0.060],   // D2  sub
-    [146.83, 0.075],   // D3  body
-    [147.42, 0.055],   // D3' detuned twin
-    [220.00, 0.045]    // A3  fifth, soft
-  ];
-  var oscs = [];
-  voices.forEach(function(v){
+  mix.connect(trem); trem.connect(hp); hp.connect(lp); lp.connect(env); env.connect(ac.destination);
+
+  var osc = [], node = [mix, trem, hp, lp, env];
+  function voice(freq, gain, pan){
     var o = ac.createOscillator(), g = ac.createGain();
-    o.type = 'sine'; o.frequency.value = v[0]; g.gain.value = v[1];
-    o.connect(g); g.connect(mix); o.start(t); oscs.push(o);
-  });
+    o.type = 'sine'; o.frequency.value = freq; g.gain.value = gain;
+    if(hasPan && pan){ var p = ac.createStereoPanner(); p.pan.value = pan; o.connect(g); g.connect(p); p.connect(mix); node.push(p); }
+    else { o.connect(g); g.connect(mix); }
+    o.start(t); osc.push(o); node.push(g); return o;
+  }
 
-  // very slow amplitude undulation -> a gentle breathing motion under the bell
-  var lfo = ac.createOscillator(); lfo.type = 'sine'; lfo.frequency.value = 0.09;
-  var lfoGain = ac.createGain(); lfoGain.gain.value = 0.06;
+  // open fifth + octave on D, widened across the field
+  voice(146.83, 0.080, -0.40);   // D3  body, left
+  voice(293.66, 0.042,  0.40);   // D4  soft octave, right
+  // A3 as a binaural pair (centre 220): the beat eases from aTop down to aEnd over
+  // the first minute, through the upper-alpha ideation band, settling on the target.
+  var bL = voice(220 - aTop/2, 0.058, -1.00);   // hard left
+  var bR = voice(220 + aTop/2, 0.058,  1.00);   // hard right
+  bL.frequency.setValueAtTime(220 - aTop/2, t); bL.frequency.linearRampToValueAtTime(220 - aEnd/2, t + SETTLE);
+  bR.frequency.setValueAtTime(220 + aTop/2, t); bR.frequency.linearRampToValueAtTime(220 + aEnd/2, t + SETTLE);
+
+  // the alpha pulse: a 10 Hz tremolo over the whole pad (isochronic), eased in
+  // from 12 Hz so it stays locked with the binaural beat. Deep enough to clearly
+  // read as a pulse, but never fully gating to silence.
+  var alpha = ac.createOscillator(); alpha.type = 'sine';
+  alpha.frequency.setValueAtTime(aTop, t); alpha.frequency.linearRampToValueAtTime(aEnd, t + SETTLE);
+  var alphaGain = ac.createGain(); alphaGain.gain.value = 0.34;                          // swing 0.16 .. 0.84
+  alpha.connect(alphaGain); alphaGain.connect(trem.gain); alpha.start(t);
+  osc.push(alpha); node.push(alphaGain);
+
+  // a very slow drift underneath, so the pad still breathes over ~15 s
+  var lfo = ac.createOscillator(); lfo.type = 'sine'; lfo.frequency.value = 0.07;
+  var lfoGain = ac.createGain(); lfoGain.gain.value = 0.03;
   lfo.connect(lfoGain); lfoGain.connect(env.gain); lfo.start(t);
+  osc.push(lfo); node.push(lfoGain);
 
-  _drone = { oscs: oscs, lfo: lfo, env: env, lp: lp, mix: mix, lfoGain: lfoGain };
+  _drone = { osc: osc, node: node, env: env };
 }
 function droneStop(){
   var d = _drone; if(!d) return;
@@ -1078,9 +1134,8 @@ function droneStop(){
     d.env.gain.exponentialRampToValueAtTime(0.0001, t + fade);   // slow fade-out
   } catch(e){}
   setTimeout(function(){
-    try { d.oscs.forEach(function(o){ o.stop(); }); } catch(e){}
-    try { d.lfo.stop(); } catch(e){}
-    [d.lp, d.mix, d.env, d.lfoGain].forEach(function(n){ try{ n.disconnect(); }catch(e){} });
+    (d.osc || []).forEach(function(o){ try{ o.stop(); }catch(e){} });
+    (d.node || []).forEach(function(n){ try{ n && n.disconnect(); }catch(e){} });
   }, (fade + 0.3) * 1000);
 }
 
