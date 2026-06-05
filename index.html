@@ -1083,7 +1083,7 @@ function droneStart(){
   var lp   = ac.createBiquadFilter(); lp.type='lowpass';  lp.frequency.value=1000; lp.Q.value=0.4;
   var env  = ac.createGain();                                           // master swell + slow drift
   env.gain.setValueAtTime(0.0001, t);
-  env.gain.exponentialRampToValueAtTime(0.5, t + 4.5);
+  env.gain.exponentialRampToValueAtTime(1.8, t + 4.5);   // well up, so the lower-pitched pad clearly reads against the bell
 
   mix.connect(trem); trem.connect(hp); hp.connect(lp); lp.connect(env); env.connect(ac.destination);
 
@@ -1111,7 +1111,7 @@ function droneStart(){
   // read as a pulse, but never fully gating to silence.
   var alpha = ac.createOscillator(); alpha.type = 'sine';
   alpha.frequency.setValueAtTime(aTop, t); alpha.frequency.linearRampToValueAtTime(aEnd, t + SETTLE);
-  var alphaGain = ac.createGain(); alphaGain.gain.value = 0.34;                          // swing 0.16 .. 0.84
+  var alphaGain = ac.createGain(); alphaGain.gain.value = 0.26;                          // swing 0.24 .. 0.76 (audible at troughs too)
   alpha.connect(alphaGain); alphaGain.connect(trem.gain); alpha.start(t);
   osc.push(alpha); node.push(alphaGain);
 
