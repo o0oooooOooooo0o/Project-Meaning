@@ -483,8 +483,9 @@ header{max-width:760px;margin:0 auto;padding:56px 26px 8px;text-align:center}
           <button class="rate-btn" data-hz="8" onclick="setAlphaRate(8,this)">8 Hz</button>
           <button class="rate-btn on" data-hz="10" onclick="setAlphaRate(10,this)">10 Hz</button>
           <button class="rate-btn" data-hz="12" onclick="setAlphaRate(12,this)">12 Hz</button>
+          <button class="rate-btn" data-hz="0" onclick="setAlphaRate(0,this)">Off</button>
         </div>
-        <div class="rate-hint">10 Hz is the rate most linked to creativity; it eases in from just above.</div>
+        <div class="rate-hint">10 Hz is the rate most linked to creativity; it eases in from just above. &ldquo;Off&rdquo; plays the bell alone.</div>
         <div class="s1-ex-note">
           If attention to the heart feels distressing, open your eyes, shorten the session, and
           let <em>ease</em> lead before love.
@@ -683,8 +684,9 @@ header{max-width:760px;margin:0 auto;padding:56px 26px 8px;text-align:center}
           <button class="rate-btn" data-hz="8" onclick="setAlphaRate(8,this)">8 Hz</button>
           <button class="rate-btn on" data-hz="10" onclick="setAlphaRate(10,this)">10 Hz</button>
           <button class="rate-btn" data-hz="12" onclick="setAlphaRate(12,this)">12 Hz</button>
+          <button class="rate-btn" data-hz="0" onclick="setAlphaRate(0,this)">Off</button>
         </div>
-        <div class="rate-hint">10 Hz is the rate most linked to creativity; it eases in from just above.</div>
+        <div class="rate-hint">10 Hz is the rate most linked to creativity; it eases in from just above. &ldquo;Off&rdquo; plays the bell alone.</div>
         <div class="s2-ex-note">
           Start with 15 minutes for the basics &mdash; picking one sensation and walking it
           through the seven questions cleanly. Use 30 once you want the fine-noticing warm-up
@@ -1058,17 +1060,21 @@ function completeBell(){ bowl(392.00, 0.13, 8.5); setTimeout(function(){ bowl(29
 // Nothing below ~145 Hz, high-passed: clean, no sub buzz.
 var _drone = null;
 var ALPHA_RATE = 10;   // user-selectable alpha rate (Hz); 10 = most creativity-linked (Lustenberger 2015)
+var ALPHA_ON = true;   // false = no alpha pad at all (bell only)
 
 // set the alpha rate from the selector; takes effect on the next session start
 function setAlphaRate(hz, btn){
-  hz = Math.max(8, Math.min(12, hz));
-  ALPHA_RATE = hz;
+  hz = parseFloat(hz) || 0;
+  if(hz <= 0){ ALPHA_ON = false; }                       // "Off": bell only, no pad
+  else { ALPHA_ON = true; ALPHA_RATE = Math.max(8, Math.min(12, hz)); }
   document.querySelectorAll('.rate-btn').forEach(function(b){
-    b.classList.toggle('on', parseFloat(b.dataset.hz) === hz);
+    var v = parseFloat(b.dataset.hz) || 0;
+    b.classList.toggle('on', v <= 0 ? !ALPHA_ON : (ALPHA_ON && v === ALPHA_RATE));
   });
 }
 function droneStart(){
   if(_drone) return;                       // already running
+  if(!ALPHA_ON) return;                    // pad turned off (Hz "Off") -> bell only
   var ac = _audio(); if(!ac) return;
   if(ac.state === 'suspended'){ try{ ac.resume(); }catch(e){} }
   var t = ac.currentTime;
