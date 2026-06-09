@@ -220,8 +220,9 @@ header{max-width:760px;margin:0 auto;padding:56px 26px 8px;text-align:center}
 .s2-teach-title{font-family:var(--display);font-size:clamp(18px,2.5vw,23px);letter-spacing:.04em;margin-top:10px}
 .stage-back{align-self:flex-start;background:none;border:none;cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);padding:6px 2px;margin-bottom:-6px;transition:color .2s}
 .stage-back:hover{color:var(--ink)}
-.rate-row{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:16px}
-.rate-label{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-right:2px}
+.wave-select{margin-top:16px;display:flex;flex-direction:column;gap:9px;align-items:center}
+.wave-row{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+.wave-band{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .rate-btn{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--muted);background:none;border:1px solid var(--line);border-radius:2px;padding:5px 11px;cursor:pointer;transition:border-color .2s,color .2s,background .2s}
 .rate-btn:hover{border-color:var(--ink);color:var(--ink)}
 .rate-btn.on{border-color:var(--ink);color:var(--ink);background:rgba(0,0,0,.05)}
@@ -478,14 +479,24 @@ header{max-width:760px;margin:0 auto;padding:56px 26px 8px;text-align:center}
           <button class="dur-btn start" onclick="startWithDuration(7200)">2 hr</button>
           <button class="dur-btn start" onclick="startWithDuration(10800)">3 hr</button>
         </div>
-        <div class="rate-row" role="group" aria-label="Alpha rate">
-          <span class="rate-label">Alpha rate</span>
-          <button class="rate-btn" data-hz="8" onclick="setAlphaRate(8,this)">8 Hz</button>
-          <button class="rate-btn on" data-hz="10" onclick="setAlphaRate(10,this)">10 Hz</button>
-          <button class="rate-btn" data-hz="12" onclick="setAlphaRate(12,this)">12 Hz</button>
-          <button class="rate-btn" data-hz="0" onclick="setAlphaRate(0,this)">Off</button>
+        <div class="wave-select" role="group" aria-label="Brainwave entrainment">
+          <div class="wave-row">
+            <span class="wave-band">Delta &middot; rest</span>
+            <button class="rate-btn" data-hz="1" onclick="setWave(1,this)">1 Hz</button>
+            <button class="rate-btn" data-hz="2" onclick="setWave(2,this)">2 Hz</button>
+            <button class="rate-btn" data-hz="3" onclick="setWave(3,this)">3 Hz</button>
+          </div>
+          <div class="wave-row">
+            <span class="wave-band">Alpha &middot; focus</span>
+            <button class="rate-btn" data-hz="8" onclick="setWave(8,this)">8 Hz</button>
+            <button class="rate-btn on" data-hz="10" onclick="setWave(10,this)">10 Hz</button>
+            <button class="rate-btn" data-hz="12" onclick="setWave(12,this)">12 Hz</button>
+          </div>
+          <div class="wave-row">
+            <button class="rate-btn" data-hz="0" onclick="setWave(0,this)">Off</button>
+          </div>
         </div>
-        <div class="rate-hint">10 Hz is the rate most linked to creativity; it eases in from just above. &ldquo;Off&rdquo; plays the bell alone.</div>
+        <div class="rate-hint">Delta (0.5&ndash;4 Hz) for deep, restorative rest; alpha (8&ndash;12 Hz) for relaxed focus &mdash; 10 Hz the rate most linked to creativity. &ldquo;Off&rdquo; plays the bell alone.</div>
         <div class="s1-ex-note">
           If attention to the heart feels distressing, open your eyes, shorten the session, and
           let <em>ease</em> lead before love.
@@ -679,14 +690,24 @@ header{max-width:760px;margin:0 auto;padding:56px 26px 8px;text-align:center}
           <button class="dur-btn" onclick="startStage2WithDuration(1800)">30 min</button>
           <button class="dur-btn" onclick="startStage2WithDuration(3600)">60 min</button>
         </div>
-        <div class="rate-row" role="group" aria-label="Alpha rate">
-          <span class="rate-label">Alpha rate</span>
-          <button class="rate-btn" data-hz="8" onclick="setAlphaRate(8,this)">8 Hz</button>
-          <button class="rate-btn on" data-hz="10" onclick="setAlphaRate(10,this)">10 Hz</button>
-          <button class="rate-btn" data-hz="12" onclick="setAlphaRate(12,this)">12 Hz</button>
-          <button class="rate-btn" data-hz="0" onclick="setAlphaRate(0,this)">Off</button>
+        <div class="wave-select" role="group" aria-label="Brainwave entrainment">
+          <div class="wave-row">
+            <span class="wave-band">Delta &middot; rest</span>
+            <button class="rate-btn" data-hz="1" onclick="setWave(1,this)">1 Hz</button>
+            <button class="rate-btn" data-hz="2" onclick="setWave(2,this)">2 Hz</button>
+            <button class="rate-btn" data-hz="3" onclick="setWave(3,this)">3 Hz</button>
+          </div>
+          <div class="wave-row">
+            <span class="wave-band">Alpha &middot; focus</span>
+            <button class="rate-btn" data-hz="8" onclick="setWave(8,this)">8 Hz</button>
+            <button class="rate-btn on" data-hz="10" onclick="setWave(10,this)">10 Hz</button>
+            <button class="rate-btn" data-hz="12" onclick="setWave(12,this)">12 Hz</button>
+          </div>
+          <div class="wave-row">
+            <button class="rate-btn" data-hz="0" onclick="setWave(0,this)">Off</button>
+          </div>
         </div>
-        <div class="rate-hint">10 Hz is the rate most linked to creativity; it eases in from just above. &ldquo;Off&rdquo; plays the bell alone.</div>
+        <div class="rate-hint">Delta (0.5&ndash;4 Hz) for deep, restorative rest; alpha (8&ndash;12 Hz) for relaxed focus &mdash; 10 Hz the rate most linked to creativity. &ldquo;Off&rdquo; plays the bell alone.</div>
         <div class="s2-ex-note">
           Start with 15 minutes for the basics &mdash; picking one sensation and walking it
           through the seven questions cleanly. Use 30 once you want the fine-noticing warm-up
@@ -1050,46 +1071,50 @@ function completeBell(){ bowl(392.00, 0.13, 8.5); setTimeout(function(){ bowl(29
 // session: the calm background layer the bell rings over. Built on its OWN
 // independent graph straight to the speakers — it shares nothing with the bell
 // synthesis, so it cannot change the bell sound (audio simply sums at output).
-// Alpha pad, tuned to D so it sits consonantly under both bell strikes. A warm
+// Entrainment pad, tuned to D so it sits consonantly under both bell strikes. A warm
 // open fifth + octave on D spread across the stereo field; A3 is a hard-panned
 // pair whose difference is a binaural beat (true binaural on headphones). Both
 // the binaural beat and an isochronic tremolo over the whole pad run at the
-// alpha rate, easing from 12 Hz down to 10 Hz over the first minute — 10 Hz is
+// selected rate, easing in from the top of the chosen band over the first minute — 10 Hz is
 // the alpha frequency most linked to creativity (Lustenberger et al. 2015), and
-// 10-12 Hz is the upper-alpha ideation band. Reads on a phone speaker too.
+// 10-12 Hz is the upper-alpha ideation band. The rate is user-selectable: delta
+// (0.5-4 Hz) for deep restorative rest, or alpha (8-12 Hz) for relaxed focus.
+// Reads on a phone speaker too.
 // Nothing below ~145 Hz, high-passed: clean, no sub buzz.
 var _drone = null;
-var ALPHA_RATE = 10;   // user-selectable alpha rate (Hz); 10 = most creativity-linked (Lustenberger 2015)
-var ALPHA_ON = true;   // false = no alpha pad at all (bell only)
+var WAVE_HZ = 10;   // selected entrainment rate (Hz): delta 0.5-4 (rest) or alpha 8-12 (focus); 10 = creativity (Lustenberger 2015)
+var WAVE_ON = true;   // false = no entrainment pad at all (bell only)
 
-// set the alpha rate from the selector; takes effect on the next session start
-function setAlphaRate(hz, btn){
+// set the entrainment rate from the selector; takes effect on the next session start
+function setWave(hz, btn){
   hz = parseFloat(hz) || 0;
-  if(hz <= 0){ ALPHA_ON = false; }                       // "Off": bell only, no pad
-  else { ALPHA_ON = true; ALPHA_RATE = Math.max(8, Math.min(12, hz)); }
+  if(hz <= 0){ WAVE_ON = false; }                       // "Off": bell only, no pad
+  else { WAVE_ON = true; WAVE_HZ = Math.max(0.5, Math.min(12, hz)); }
   document.querySelectorAll('.rate-btn').forEach(function(b){
     var v = parseFloat(b.dataset.hz) || 0;
-    b.classList.toggle('on', v <= 0 ? !ALPHA_ON : (ALPHA_ON && v === ALPHA_RATE));
+    b.classList.toggle('on', v <= 0 ? !WAVE_ON : (WAVE_ON && v === WAVE_HZ));
   });
 }
 function droneStart(){
   if(_drone) return;                       // already running
-  if(!ALPHA_ON) return;                    // pad turned off (Hz "Off") -> bell only
+  if(!WAVE_ON) return;                    // pad turned off (Hz "Off") -> bell only
   var ac = _audio(); if(!ac) return;
   if(ac.state === 'suspended'){ try{ ac.resume(); }catch(e){} }
   var t = ac.currentTime;
   var hasPan = (typeof ac.createStereoPanner === 'function');
   var SETTLE = 60;                                  // seconds to ease the rate in
-  var aEnd = Math.max(8, Math.min(12, ALPHA_RATE)); // target alpha rate (Hz)
-  var aTop = Math.min(12.5, aEnd + 2);              // start just above, then settle to aEnd
+  var aEnd = Math.max(0.5, Math.min(12, WAVE_HZ)); // target rate (Hz): delta or alpha
+  var bandTop = (aEnd >= 5) ? 12 : 4;               // alpha ceiling vs delta ceiling
+  var aTop = Math.min(bandTop, aEnd + 2);           // ease in from the top of the chosen band
+  var isDelta = aEnd < 5;                           // delta = deep-rest mode: gentler, slower
 
   var mix  = ac.createGain(); mix.gain.value = 1;                       // carrier sum
-  var trem = ac.createGain(); trem.gain.value = 0.5;                    // 10 Hz pulse stage
+  var trem = ac.createGain(); trem.gain.value = 0.5;                    // pulse stage (delta/alpha rate)
   var hp   = ac.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=110; hp.Q.value=0.5;
   var lp   = ac.createBiquadFilter(); lp.type='lowpass';  lp.frequency.value=1000; lp.Q.value=0.4;
   var env  = ac.createGain();                                           // master swell + slow drift
   env.gain.setValueAtTime(0.0001, t);
-  env.gain.exponentialRampToValueAtTime(1.8, t + 4.5);   // well up, so the lower-pitched pad clearly reads against the bell
+  env.gain.exponentialRampToValueAtTime(1.8, t + (isDelta ? 9 : 4.5));   // well up; slower, gentler swell for delta rest
 
   mix.connect(trem); trem.connect(hp); hp.connect(lp); lp.connect(env); env.connect(ac.destination);
 
@@ -1123,7 +1148,7 @@ function droneStart(){
   // read as a pulse, but never fully gating to silence.
   var alpha = ac.createOscillator(); alpha.type = 'sine';
   alpha.frequency.setValueAtTime(aTop, t); alpha.frequency.linearRampToValueAtTime(aEnd, t + SETTLE);
-  var alphaGain = ac.createGain(); alphaGain.gain.value = 0.26;                          // swing 0.24 .. 0.76 (audible at troughs too)
+  var alphaGain = ac.createGain(); alphaGain.gain.value = isDelta ? 0.18 : 0.26;          // gentler, more continuous pulse for delta rest
   alpha.connect(alphaGain); alphaGain.connect(trem.gain); alpha.start(t);
   osc.push(alpha); node.push(alphaGain);
 
