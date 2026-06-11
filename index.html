@@ -1157,11 +1157,11 @@ function droneStart(){
 
   var mix  = ac.createGain(); mix.gain.value = 1;                       // carrier sum
   var trem = ac.createGain(); trem.gain.value = 0.5;                    // pulse stage (delta/alpha rate)
-  var hp   = ac.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=110; hp.Q.value=0.5;
-  var lp   = ac.createBiquadFilter(); lp.type='lowpass';  lp.frequency.value=1000; lp.Q.value=0.4;
+  var hp   = ac.createBiquadFilter(); hp.type='highpass'; hp.frequency.value = isDelta ? 45 : 110; hp.Q.value=0.5;  // delta keeps its sub foundation
+  var lp   = ac.createBiquadFilter(); lp.type='lowpass';  lp.frequency.value = isDelta ? 480 : 1000; lp.Q.value=0.4; // delta sits low and dark
   var env  = ac.createGain();                                           // master swell + slow drift
   env.gain.setValueAtTime(0.0001, t);
-  env.gain.exponentialRampToValueAtTime(1.8, t + (isDelta ? 9 : 4.5));   // well up; slower, gentler swell for delta rest
+  env.gain.exponentialRampToValueAtTime(1.8, t + (isDelta ? 13 : 4.5));  // slow, deep onset for delta rest
 
   mix.connect(trem); trem.connect(hp); hp.connect(lp); lp.connect(env); env.connect(ac.destination);
 
@@ -1174,34 +1174,49 @@ function droneStart(){
     o.start(t); osc.push(o); node.push(g); return o;
   }
 
-  // open fifth + octave on D, widened across the field
-  voice(146.83, 0.080, -0.40);   // D3  body, left
-  voice(293.66, isDelta ? 0.015 : 0.042,  0.40);   // D4 soft octave; eased back in delta so it doesn't mask the D4 exhale bell
-  // A3 as a binaural pair (centre 220): the beat eases from aTop down to aEnd over
-  // the first minute, through the upper-alpha ideation band, settling on the target.
-  var bL = voice(220 - aTop/2, 0.058, -1.00);   // hard left
-  var bR = voice(220 + aTop/2, 0.058,  1.00);   // hard right
-  bL.frequency.setValueAtTime(220 - aTop/2, t); bL.frequency.linearRampToValueAtTime(220 - aEnd/2, t + SETTLE);
-  bR.frequency.setValueAtTime(220 + aTop/2, t); bR.frequency.linearRampToValueAtTime(220 + aEnd/2, t + SETTLE);
+  var bCenter = isDelta ? 110 : 220;   // binaural carrier centre: an octave lower for delta
+  var bL, bR;
+  if(isDelta){
+    // DEEP DELTA: an octave below the alpha pad, dark, with NO bright presence tones -> nothing like alpha.
+    voice(73.42,  0.052, -0.25);   // D2  sub foundation, felt more than heard
+    voice(110.00, 0.070,  0.25);   // A2  low warm body
+    bL = voice(bCenter - aTop/2, 0.084, -1.00);   // close-detuned low pair: the deep binaural beat
+    bR = voice(bCenter + aTop/2, 0.084,  1.00);
+    voice(146.83, 0.054,  0.00);   // D3  a touch of warmth above
+    voice(220.00, 0.030, -0.20);   // A3  faint, just so it still reads on a phone speaker
+    // a faint dark rumble (brown noise) -> the oceanic "deep sleep" texture, and unlike the sub sines it
+    // actually carries on a small phone speaker. It runs through the pad so it pulses and swells with it.
+    var nlen = Math.floor(ac.sampleRate * 4), nbuf = ac.createBuffer(1, nlen, ac.sampleRate), nd = nbuf.getChannelData(0), nlast = 0;
+    for(var nk = 0; nk < nlen; nk++){ var nw = Math.random() * 2 - 1; nlast = (nlast + 0.02 * nw) / 1.02; nd[nk] = nlast * 2.0; }
+    var nsrc = ac.createBufferSource(); nsrc.buffer = nbuf; nsrc.loop = true;
+    var nlp = ac.createBiquadFilter(); nlp.type = 'lowpass'; nlp.frequency.value = 210; nlp.Q.value = 0.3;
+    var ngain = ac.createGain(); ngain.gain.value = 0.07;
+    nsrc.connect(nlp); nlp.connect(ngain); ngain.connect(mix);
+    nsrc.start(t); osc.push(nsrc); node.push(nlp, ngain);
+  } else {
+    // ALPHA: warm mid pad with bright presence carriers (unchanged).
+    voice(146.83, 0.080, -0.40);   // D3  body, left
+    voice(293.66, 0.042,  0.40);   // D4  soft octave
+    bL = voice(bCenter - aTop/2, 0.058, -1.00);
+    bR = voice(bCenter + aTop/2, 0.058,  1.00);
+    voice(440.00, 0.050, -0.25);   // A4  the fifth, an octave up
+    voice(587.33, 0.034,  0.25);   // D5  an octave above the exhale tone
+  }
+  // the binaural beat eases from aTop down to aEnd over the first minute, settling on the target rate.
+  bL.frequency.setValueAtTime(bCenter - aTop/2, t); bL.frequency.linearRampToValueAtTime(bCenter - aEnd/2, t + SETTLE);
+  bR.frequency.setValueAtTime(bCenter + aTop/2, t); bR.frequency.linearRampToValueAtTime(bCenter + aEnd/2, t + SETTLE);
 
-  // presence carriers up in the ear's sensitive band, so the pad reads clearly
-  // against the bell (low tones are perceived as quieter at equal amplitude).
-  // Both consonant with the D drone, and they pulse with the same 10 Hz tremolo.
-  voice(440.00, 0.050, -0.25);   // A4  the fifth, an octave up
-  voice(587.33, 0.034,  0.25);   // D5  an octave above the exhale tone
-
-  // the alpha pulse: a 10 Hz tremolo over the whole pad (isochronic), eased in
-  // from 12 Hz so it stays locked with the binaural beat. Deep enough to clearly
-  // read as a pulse, but never fully gating to silence.
+  // the pulse: an isochronic tremolo at the chosen rate over the whole pad, eased in from the top
+  // of the band so it stays locked with the binaural beat. A deeper, slower throb for delta.
   var alpha = ac.createOscillator(); alpha.type = 'sine';
   alpha.frequency.setValueAtTime(aTop, t); alpha.frequency.linearRampToValueAtTime(aEnd, t + SETTLE);
-  var alphaGain = ac.createGain(); alphaGain.gain.value = isDelta ? 0.18 : 0.26;          // gentler, more continuous pulse for delta rest
+  var alphaGain = ac.createGain(); alphaGain.gain.value = isDelta ? 0.22 : 0.26;
   alpha.connect(alphaGain); alphaGain.connect(trem.gain); alpha.start(t);
   osc.push(alpha); node.push(alphaGain);
 
   // a very slow drift underneath, so the pad still breathes over ~15 s
-  var lfo = ac.createOscillator(); lfo.type = 'sine'; lfo.frequency.value = 0.07;
-  var lfoGain = ac.createGain(); lfoGain.gain.value = 0.03;
+  var lfo = ac.createOscillator(); lfo.type = 'sine'; lfo.frequency.value = isDelta ? 0.045 : 0.07;
+  var lfoGain = ac.createGain(); lfoGain.gain.value = isDelta ? 0.18 : 0.03;
   lfo.connect(lfoGain); lfoGain.connect(env.gain); lfo.start(t);
   osc.push(lfo); node.push(lfoGain);
 
