@@ -1047,7 +1047,7 @@ function bowl(fund, peak, decay){
   peak  = (peak  == null) ? 0.08 : peak;
   decay = decay || 3.5;
   // Per-option bell volume, set by the user via the volume bar (defaults keep the soft delta bell).
-  peak *= bellVol();
+  peak *= bellGain();
 
   // gentle lowpass that closes as it decays -> mellow throughout, guarantees nothing bright
   var lp = ac.createBiquadFilter();
@@ -1125,6 +1125,10 @@ function setWave(hz, btn){
 // ----- per-option bell volume -----
 function currentWaveKey(){ return WAVE_ON ? String(WAVE_HZ) : '0'; }       // '0' = waves off
 function bellVol(){ var v = BELL_VOL[currentWaveKey()]; return (v == null) ? 1.0 : v; }
+// The slider stores 0..1.5 (shown as 0..150%). Below 100% it's a straight cut; ABOVE 100% the gain
+// climbs much faster (150% -> ~2.5x, about +8 dB) so turning it up past normal is clearly audible,
+// not the timid +3.5 dB a literal 1.5x would give on a short bell.
+function bellGain(){ var v = bellVol(); return (v <= 1) ? v : 1 + (v - 1) * 3; }
 function syncBellVolUI(){
   var v = bellVol();
   document.querySelectorAll('.bell-vol').forEach(function(s){ s.value = v; });
